@@ -37,6 +37,8 @@ export type AbilityInfo = {
 export type PokemonData = {
   id: number;
   englishName: string;
+  /** Name as sent to the English TTS engine (no symbols, e.g. "Female Nidoran"). */
+  englishSpeechName: string;
   hebrewName: string;
   /** Text sent to the Hebrew TTS engine for the name (may differ from display). */
   hebrewPronunciation: string;
@@ -56,6 +58,9 @@ export type PokemonData = {
 
   speechTextEn: string;
   speechTextHe: string;
+  /** Speech body without the name (number, type, ability, description). */
+  speechBodyEn: string;
+  speechBodyHe: string;
 
   imageUrl: string;
   fallbackSpriteUrl: string;
@@ -67,3 +72,9 @@ export type PokemonData = {
 };
 
 export type Language = "he" | "en";
+
+/** One piece of a spoken announcement, with its own speech language. */
+export type SpeechSegment = {
+  text: string;
+  language: Language;
+};

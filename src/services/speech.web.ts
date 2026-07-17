@@ -16,7 +16,7 @@
  * 4. Hebrew may be reported as "he", "he-IL", "he_IL" or the legacy "iw"
  *    code depending on the platform — all are matched.
  */
-import type { Language } from "../types/pokemon";
+import type { Language, SpeechSegment } from "../types/pokemon";
 import { splitSpeechText } from "../utils/speechChunks";
 
 export type SpeechRateSetting = "slow" | "normal" | "fast";
@@ -38,7 +38,6 @@ const LANGUAGE_PREFIXES: Record<Language, string[]> = {
 };
 
 export type SpeakOptions = {
-  language: Language;
   rate: SpeechRateSetting;
   onStart?: () => void;
   onDone?: () => void;
@@ -132,10 +131,11 @@ export async function getSpeechAvailability(
 }
 
 /**
- * Stops any current speech and starts a new utterance.
- * Speech never overlaps (guarded by an utterance token).
+ * Stops any current speech and speaks the segments one after another,
+ * each with its own language voice (e.g. the Pokémon name in English,
+ * the details in Hebrew). Speech never overlaps (utterance token guard).
  */
-export function speak(text: string, options: SpeakOptions): void {
+export function speak(segments: SpeechSegment[], options: SpeakOptions): void {
   const synth = getSynth();
   if (!synth) {
     options.onError?.(new Error("Speech synthesis is not supported"));
@@ -154,20 +154,34 @@ export function speak(text: string, options: SpeakOptions): void {
   void loadVoices().then((voices) => {
     if (!isCurrent()) return;
 
-    const voice = pickVoice(voices, options.language);
-    const chunks = splitSpeechText(text);
+    // Flatten segments into short language-tagged chunks.
+    const queue = segments
+      .filter((s) => s.text.trim().length > 0)
+      .flatMap((s) =>
+        splitSpeechText(s.text).map((chunk) => ({
+          text: chunk,
+          language: s.language,
+        }))
+      );
+    if (queue.length === 0) {
+      options.onDone?.();
+      return;
+    }
+
     liveUtterances = [];
     let started = false;
     let index = 0;
 
     const speakNext = () => {
       if (!isCurrent()) return;
-      if (index >= chunks.length) {
+      if (index >= queue.length) {
         options.onDone?.();
         return;
       }
-      const utterance = new SpeechSynthesisUtterance(chunks[index++]);
-      utterance.lang = SPEECH_LOCALES[options.language];
+      const item = queue[index++];
+      const utterance = new SpeechSynthesisUtterance(item.text);
+      utterance.lang = SPEECH_LOCALES[item.language];
+      const voice = pickVoice(voices, item.language);
       if (voice) utterance.voice = voice;
       utterance.rate = SPEECH_RATE_VALUES[options.rate];
       utterance.onstart = () => {

@@ -4,7 +4,12 @@ import { DESCRIPTIONS_1 } from "./descriptions1";
 import { DESCRIPTIONS_2 } from "./descriptions2";
 import { ABILITIES } from "./abilities";
 import { TYPE_NAMES_EN, TYPE_NAMES_HE } from "../localization/typeNames";
-import { buildSpeechTextEn, buildSpeechTextHe } from "../utils/speechText";
+import {
+  buildSpeechBodyEn,
+  buildSpeechBodyHe,
+  buildSpeechTextEn,
+  buildSpeechTextHe,
+} from "../utils/speechText";
 import type { PokemonData, PokemonStats, TypeKey } from "../types/pokemon";
 
 type BaseEntry = {
@@ -81,9 +86,23 @@ function buildPokemon(entry: BaseEntry): PokemonData | null {
     ENGLISH_SPEECH_NAME_OVERRIDES[entry.id] ?? englishName;
   const hebrewPronunciation = hebrew.pronunciation ?? hebrew.name;
 
+  const speechPartsEn = {
+    id: entry.id,
+    types,
+    abilityName: ability.nameEn,
+    description: description.en,
+  };
+  const speechPartsHe = {
+    id: entry.id,
+    types,
+    abilityName: ability.nameHe,
+    description: description.he,
+  };
+
   return {
     id: entry.id,
     englishName,
+    englishSpeechName,
     hebrewName: hebrew.name,
     hebrewPronunciation,
     types,
@@ -96,18 +115,10 @@ function buildPokemon(entry: BaseEntry): PokemonData | null {
     abilityDescriptionHe: ability.descriptionHe,
     descriptionEn: description.en,
     descriptionHe: description.he,
-    speechTextEn: buildSpeechTextEn(englishSpeechName, {
-      id: entry.id,
-      types,
-      abilityName: ability.nameEn,
-      description: description.en,
-    }),
-    speechTextHe: buildSpeechTextHe(hebrewPronunciation, {
-      id: entry.id,
-      types,
-      abilityName: ability.nameHe,
-      description: description.he,
-    }),
+    speechTextEn: buildSpeechTextEn(englishSpeechName, speechPartsEn),
+    speechTextHe: buildSpeechTextHe(hebrewPronunciation, speechPartsHe),
+    speechBodyEn: buildSpeechBodyEn(speechPartsEn),
+    speechBodyHe: buildSpeechBodyHe(speechPartsHe),
     imageUrl: officialArtworkUrl(entry.id),
     fallbackSpriteUrl: fallbackSpriteUrl(entry.id),
     heightM: entry.heightM,

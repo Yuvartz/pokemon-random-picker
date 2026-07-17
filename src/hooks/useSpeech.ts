@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { speak, stopSpeech } from "../services/speech";
 import { useSettings } from "../context/SettingsContext";
+import { buildSpeechSegments } from "../utils/speechText";
+import { pickRandomHype } from "../data/hypePhrases";
 import type { PokemonData } from "../types/pokemon";
 
 /**
@@ -29,13 +31,16 @@ export function useSpeech() {
 
   const speakPokemon = useCallback(
     (pokemon: PokemonData) => {
-      const text =
-        settings.language === "he"
-          ? pokemon.speechTextHe
-          : pokemon.speechTextEn;
+      // A different excited opener every time, then the name (always in
+      // English — Hebrew voices misread transliterated names), then the
+      // details in the app language.
+      const segments = buildSpeechSegments(
+        pokemon,
+        settings.language,
+        pickRandomHype(settings.language)
+      );
       setSpeechFailed(false);
-      speak(text, {
-        language: settings.language,
+      speak(segments, {
         rate: settings.speechRate,
         onStart: () => {
           if (mounted.current) setIsSpeaking(true);

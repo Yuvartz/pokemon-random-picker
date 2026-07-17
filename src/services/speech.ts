@@ -1,5 +1,5 @@
 import * as Speech from "expo-speech";
-import type { Language } from "../types/pokemon";
+import type { Language, SpeechSegment } from "../types/pokemon";
 
 export type SpeechRateSetting = "slow" | "normal" | "fast";
 
@@ -15,17 +15,16 @@ const SPEECH_LOCALES: Record<Language, string> = {
   en: "en-US",
 };
 
+const LANGUAGE_PREFIXES: Record<Language, string[]> = {
+  he: ["he", "iw"], // "iw" is the legacy Hebrew code some engines report
+  en: ["en"],
+};
+
 export type SpeakOptions = {
-  language: Language;
   rate: SpeechRateSetting;
   onStart?: () => void;
   onDone?: () => void;
   onError?: (error: unknown) => void;
-};
-
-const LANGUAGE_PREFIXES: Record<Language, string[]> = {
-  he: ["he", "iw"], // "iw" is the legacy Hebrew code some engines report
-  en: ["en"],
 };
 
 /**
@@ -57,34 +56,61 @@ export async function getSpeechAvailability(
 let utteranceToken = 0;
 
 /**
- * Stops any current speech and starts a new utterance.
- * Guarantees speech never overlaps.
+ * Stops any current speech and speaks the segments one after another,
+ * each with its own language voice. Speech never overlaps.
  */
-export function speak(text: string, options: SpeakOptions): void {
+export function speak(segments: SpeechSegment[], options: SpeakOptions): void {
   const token = ++utteranceToken;
   const isCurrent = () => token === utteranceToken;
+  const queue = segments.filter((s) => s.text.trim().length > 0);
+
+  if (queue.length === 0) {
+    options.onDone?.();
+    return;
+  }
 
   try {
     Speech.stop();
-    Speech.speak(text, {
-      language: SPEECH_LOCALES[options.language],
-      rate: SPEECH_RATE_VALUES[options.rate],
-      onStart: () => {
-        if (isCurrent()) options.onStart?.();
-      },
-      onDone: () => {
-        if (isCurrent()) options.onDone?.();
-      },
-      onStopped: () => {
-        if (isCurrent()) options.onDone?.();
-      },
-      onError: (error) => {
-        if (isCurrent()) options.onError?.(error);
-      },
-    });
-  } catch (error) {
-    options.onError?.(error);
+  } catch {
+    // Ignore: stopping while idle must not break speaking.
   }
+
+  let started = false;
+  let index = 0;
+
+  const speakNext = () => {
+    if (!isCurrent()) return;
+    if (index >= queue.length) {
+      options.onDone?.();
+      return;
+    }
+    const segment = queue[index++];
+    try {
+      Speech.speak(segment.text, {
+        language: SPEECH_LOCALES[segment.language],
+        rate: SPEECH_RATE_VALUES[options.rate],
+        onStart: () => {
+          if (isCurrent() && !started) {
+            started = true;
+            options.onStart?.();
+          }
+        },
+        onDone: () => {
+          if (isCurrent()) speakNext();
+        },
+        onStopped: () => {
+          if (isCurrent()) options.onDone?.();
+        },
+        onError: (error) => {
+          if (isCurrent()) options.onError?.(error);
+        },
+      });
+    } catch (error) {
+      if (isCurrent()) options.onError?.(error);
+    }
+  };
+
+  speakNext();
 }
 
 /** Stops speech immediately. Safe to call even when nothing is playing. */
