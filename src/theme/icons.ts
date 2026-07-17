@@ -13,6 +13,7 @@ export const ICONS = {
   evolutions: require("../../assets/icons/evolutions.png"),
   history: require("../../assets/icons/history.png"),
   gear: require("../../assets/icons/gear.png"),
+  ball: require("../../assets/icons/ball.png"),
   logo: require("../../assets/icons/logo.png"),
 } as const;
 

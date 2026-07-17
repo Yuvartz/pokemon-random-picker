@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { PokemonCard } from "../components/PokemonCard";
-import { PrimaryButton } from "../components/PrimaryButton";
+import { PickButton } from "../components/PickButton";
 import { LoadingReveal } from "../components/LoadingReveal";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { useSettings } from "../context/SettingsContext";
@@ -281,7 +281,7 @@ export function HomeScreen({ navigation, route }: Props) {
 
       {/* All controls live up here so nothing requires scrolling. */}
       <View style={styles.controlBar}>
-        <PrimaryButton
+        <PickButton
           label={
             isRevealing
               ? strings.choosing
@@ -289,11 +289,9 @@ export function HomeScreen({ navigation, route }: Props) {
                 ? strings.chooseAnotherButton
                 : strings.chooseButton
           }
-          iconSource={ICONS.dice}
           onPress={chooseRandom}
-          color={theme.accent}
-          disabled={isRevealing}
-          style={styles.mainButton}
+          accent={theme.accent}
+          revealing={isRevealing}
         />
         <View style={[styles.iconRow, isRTL && styles.headerRTL]}>
           <IconButton

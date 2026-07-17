@@ -40,6 +40,7 @@ const ASSETS = {
   evolutions: `A twisting green DNA double-helix strand with golden sparkle stars. ${STYLE}`,
   history: `A round teal pocket watch with a curved arrow circling around it. ${STYLE}`,
   gear: `A friendly round blue-gray gear cog with a glossy shine. ${STYLE}`,
+  ball: `A closed glossy red-and-white capsule ball with a central button, seen straight on. ${STYLE}`,
   logo: `A red-and-white capsule ball, slightly open with golden light and a question mark glowing inside. ${STYLE}`,
 };
 
