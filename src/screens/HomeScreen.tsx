@@ -43,6 +43,18 @@ export function HomeScreen({ navigation, route }: Props) {
   const [isRevealing, setIsRevealing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [speechAvailable, setSpeechAvailable] = useState(true);
+  // Previously shown Pokémon in this session, most recent last.
+  const [backStack, setBackStack] = useState<number[]>([]);
+  const pokemonRef = useRef<PokemonData | null>(null);
+
+  const showPokemon = useCallback((next: PokemonData) => {
+    const previous = pokemonRef.current;
+    if (previous && previous.id !== next.id) {
+      setBackStack((stack) => [...stack.slice(-49), previous.id]);
+    }
+    pokemonRef.current = next;
+    setPokemon(next);
+  }, []);
 
   const cardOpacity = useRef(new Animated.Value(1)).current;
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -91,7 +103,7 @@ export function HomeScreen({ navigation, route }: Props) {
       lightTap(settings.haptics);
 
       const finish = () => {
-        setPokemon(selected);
+        showPokemon(selected);
         addToHistory(selected.id);
         setIsRevealing(false);
         revealingRef.current = false;
@@ -127,6 +139,7 @@ export function HomeScreen({ navigation, route }: Props) {
       cardOpacity,
       schedule,
       speakPokemon,
+      showPokemon,
     ]
   );
 
@@ -148,11 +161,24 @@ export function HomeScreen({ navigation, route }: Props) {
       if (selected) {
         stop();
         setError(null);
-        setPokemon(selected);
+        showPokemon(selected);
         cardOpacity.setValue(1);
       }
     }
-  }, [route.params?.pokemonId, navigation, stop, cardOpacity]);
+  }, [route.params?.pokemonId, navigation, stop, cardOpacity, showPokemon]);
+
+  const goBackToPrevious = useCallback(() => {
+    if (revealingRef.current || backStack.length === 0) return;
+    const previous = getPokemonById(backStack[backStack.length - 1]);
+    setBackStack((stack) => stack.slice(0, -1));
+    if (previous) {
+      stop();
+      setError(null);
+      pokemonRef.current = previous;
+      setPokemon(previous);
+      cardOpacity.setValue(1);
+    }
+  }, [backStack, stop, cardOpacity]);
 
   const theme = pokemon ? getTypeTheme(pokemon.types[0]) : DEFAULT_THEME;
 
@@ -221,18 +247,41 @@ export function HomeScreen({ navigation, route }: Props) {
       </ScrollView>
 
       <View style={styles.footer}>
-        <PrimaryButton
-          label={
-            isRevealing
-              ? strings.choosing
-              : pokemon
-                ? strings.chooseAnotherButton
-                : strings.chooseButton
-          }
-          onPress={chooseRandom}
-          color={theme.accent}
-          disabled={isRevealing}
-        />
+        <View style={[styles.footerButtons, isRTL && styles.headerRTL]}>
+          {backStack.length > 0 && (
+            <Pressable
+              onPress={goBackToPrevious}
+              disabled={isRevealing}
+              accessibilityRole="button"
+              accessibilityLabel={strings.previousButton}
+              accessibilityState={{ disabled: isRevealing }}
+              style={({ pressed }) => [
+                styles.backButtonFooter,
+                {
+                  borderColor: theme.accent,
+                  opacity: isRevealing ? 0.5 : pressed ? 0.7 : 1,
+                },
+              ]}
+            >
+              <Text style={[styles.backButtonFooterText, { color: theme.accent }]}>
+                ↩️ {strings.previousButton}
+              </Text>
+            </Pressable>
+          )}
+          <PrimaryButton
+            label={
+              isRevealing
+                ? strings.choosing
+                : pokemon
+                  ? strings.chooseAnotherButton
+                  : strings.chooseButton
+            }
+            onPress={chooseRandom}
+            color={theme.accent}
+            disabled={isRevealing}
+            style={styles.mainButton}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -297,5 +346,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.m,
     paddingTop: SPACING.s,
     paddingBottom: SPACING.l,
+  },
+  footerButtons: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    gap: SPACING.s,
+  },
+  mainButton: {
+    flex: 1,
+  },
+  backButtonFooter: {
+    minHeight: 56,
+    minWidth: MIN_TOUCH,
+    borderRadius: 28,
+    borderWidth: 2,
+    backgroundColor: COLORS.card,
+    paddingHorizontal: SPACING.m,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  backButtonFooterText: {
+    fontSize: 15,
+    fontWeight: "700",
   },
 });
