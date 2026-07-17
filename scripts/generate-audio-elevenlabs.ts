@@ -49,16 +49,16 @@ type Job = { file: string; text: string };
 
 function collectJobs(): Job[] {
   const jobs: Job[] = [];
-  hypePhrases.he.forEach((text, i) => {
-    jobs.push({ file: join("he", `hype-${i}.mp3`), text });
-  });
+  // ENGLISH ONLY. eleven_multilingual_v2 does not support Hebrew at all
+  // (it reads Hebrew text as a wrong language), and eleven_v3 — which
+  // does — hallucinates on short clips. All Hebrew audio is therefore
+  // recorded by scripts/generate-audio.ts with Microsoft's he-IL voice.
   hypePhrases.en.forEach((text, i) => {
     jobs.push({ file: join("en", `hype-${i}.mp3`), text });
   });
   for (const p of ALL_POKEMON) {
     jobs.push({ file: join("name", `${p.id}.mp3`), text: `${p.englishSpeechName}!` });
     if (RECORD_ALL) {
-      jobs.push({ file: join("he", `body-${p.id}.mp3`), text: p.speechBodyHe });
       jobs.push({ file: join("en", `body-${p.id}.mp3`), text: p.speechBodyEn });
     }
   }
