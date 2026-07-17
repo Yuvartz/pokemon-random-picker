@@ -92,7 +92,24 @@ and `expo-image` caches them on disk, so previously seen Pokémon show their
 image offline too. If the official artwork fails, the app falls back to the
 small game sprite, and then to a question-mark placeholder.
 
-## How Text-to-Speech works
+## How speech works
+
+**On the web app, announcements are studio-quality recordings.** The
+hype openers and Pokémon names were recorded with ElevenLabs
+(eleven_v3, "Jessica" — `scripts/generate-audio-elevenlabs.ts`, requires
+`ELEVENLABS_API_KEY`); the longer detail clips use Microsoft's neural
+voices (he-IL-Hila / en-US-Jenny via the Edge TTS endpoint —
+`scripts/generate-audio.ts`). Everything lands in `public/audio/**`,
+which ships with the web build. With a paid ElevenLabs plan,
+`npm run generate:audio:elevenlabs -- --all --force` re-records the
+detail clips with ElevenLabs too (~70k credits). `src/services/audioSpeech.web.ts` plays the playlist
+(hype → English name → details) through a pool of unlocked audio
+elements; the speech-speed setting maps to `playbackRate`. Regenerate
+new/missing clips with `npm run generate:audio` (idempotent).
+
+**If a recording fails to load** (offline, missing file), playback falls
+back — from the exact same segment — to the device's text-to-speech
+described below. The native (Expo Go) app always uses device TTS.
 
 `src/services/speech.ts` wraps `expo-speech`:
 

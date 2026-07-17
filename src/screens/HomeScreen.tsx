@@ -17,6 +17,10 @@ import { useSettings } from "../context/SettingsContext";
 import { useHistory } from "../context/HistoryContext";
 import { useSpeech } from "../hooks/useSpeech";
 import { getSpeechAvailability, unlockSpeech } from "../services/speech";
+import {
+  canPlayRecordings,
+  unlockAudioPlayback,
+} from "../services/audioSpeech";
 import { getPokemonById } from "../data/pokemon";
 import { getRandomPokemonId } from "../utils/random";
 import { getTypeTheme, DEFAULT_THEME } from "../theme/typeColors";
@@ -99,7 +103,10 @@ export function HomeScreen({ navigation, route }: Props) {
           useNativeDriver: true,
         }).start();
 
-        if (settings.autoSpeech && speechAvailable) {
+        // Recorded announcements play regardless of installed TTS voices,
+        // so only skip auto-speech when neither recordings nor a voice
+        // can produce sound.
+        if (settings.autoSpeech && (speechAvailable || canPlayRecordings())) {
           schedule(() => speakPokemon(selected), SPEECH_DELAY_MS);
         }
       };
@@ -124,9 +131,11 @@ export function HomeScreen({ navigation, route }: Props) {
   );
 
   const chooseRandom = useCallback(() => {
-    // Must run synchronously inside the tap: unlocks browser speech so the
-    // delayed automatic reading is allowed (no-op on iOS/Android native).
+    // Must run synchronously inside the tap: unlocks browser speech and
+    // audio playback so the delayed automatic reading is allowed
+    // (both are no-ops on iOS/Android native).
     unlockSpeech();
+    unlockAudioPlayback();
     revealPokemon(getRandomPokemonId(), true);
   }, [revealPokemon]);
 
@@ -181,10 +190,10 @@ export function HomeScreen({ navigation, route }: Props) {
         showsVerticalScrollIndicator={false}
       >
         {error && <ErrorMessage message={error} />}
-        {!speechAvailable && (
+        {!speechAvailable && !canPlayRecordings() && (
           <ErrorMessage message={strings.speechUnavailable} />
         )}
-        {speechFailed && speechAvailable && (
+        {speechFailed && (speechAvailable || canPlayRecordings()) && (
           <ErrorMessage message={strings.speechErrorShort} />
         )}
 

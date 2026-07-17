@@ -20,7 +20,7 @@ const en = {
   kilogramsUnit: "kg",
   aboutTitle: "About",
   aboutText:
-    "An unofficial, non-commercial educational project. Pokémon names and imagery belong to their respective rights holders (Nintendo, Game Freak, The Pokémon Company). Artwork is loaded from the free PokéAPI project.",
+    "An unofficial, non-commercial educational project. Pokémon names and imagery belong to their respective rights holders (Nintendo, Game Freak, The Pokémon Company). Artwork is loaded from the free PokéAPI project. Voice recordings were created with ElevenLabs and Microsoft neural text-to-speech.",
   settingsTitle: "Settings",
   languageLabel: "Language",
   languageHebrew: "עברית",
@@ -65,7 +65,7 @@ const he: typeof en = {
   kilogramsUnit: 'ק"ג',
   aboutTitle: "אודות",
   aboutText:
-    "פרויקט חינוכי לא רשמי וללא מטרות רווח. השמות והדמויות של פוקימון שייכים לבעלי הזכויות שלהם (נינטנדו, גיים פריק וחברת הפוקימון). התמונות נטענות מפרויקט PokéAPI החופשי.",
+    "פרויקט חינוכי לא רשמי וללא מטרות רווח. השמות והדמויות של פוקימון שייכים לבעלי הזכויות שלהם (נינטנדו, גיים פריק וחברת הפוקימון). התמונות נטענות מפרויקט PokéAPI החופשי. הקלטות הקול נוצרו עם ElevenLabs ועם ההקראה הנוירלית של מיקרוסופט.",
   settingsTitle: "הגדרות",
   languageLabel: "שפה",
   languageHebrew: "עברית",
