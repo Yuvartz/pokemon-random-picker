@@ -1,7 +1,12 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { getTypeTheme } from "../theme/typeColors";
-import { RADIUS, SPACING } from "../theme/colors";
+import {
+  COLORS,
+  RADIUS,
+  SPACING,
+  TYPOGRAPHY,
+} from "../theme/colors";
 import type { TypeKey } from "../types/pokemon";
 
 type Props = {
@@ -13,7 +18,10 @@ export function TypeBadge({ type, label }: Props) {
   const theme = getTypeTheme(type);
   return (
     <View
-      style={[styles.badge, { backgroundColor: theme.accent }]}
+      style={[
+        styles.badge,
+        { backgroundColor: theme.accent, borderColor: theme.background },
+      ]}
       accessibilityRole="text"
       accessible
       accessibilityLabel={label}
@@ -25,15 +33,18 @@ export function TypeBadge({ type, label }: Props) {
 
 const styles = StyleSheet.create({
   badge: {
-    borderRadius: RADIUS.badge,
+    minHeight: 28,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
     paddingHorizontal: SPACING.m,
-    paddingVertical: 6,
+    paddingVertical: SPACING.xs,
     marginHorizontal: SPACING.xs,
     marginVertical: SPACING.xs,
+    alignItems: "center",
+    justifyContent: "center",
   },
   label: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "700",
+    ...TYPOGRAPHY.label,
+    color: COLORS.buttonText,
   },
 });

@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AccessibilityInfo, Animated, StyleSheet, Text, View } from "react-native";
-import { COLORS, SPACING } from "../theme/colors";
+import {
+  COLORS,
+  RADIUS,
+  SHADOWS,
+  SPACING,
+  TYPOGRAPHY,
+} from "../theme/colors";
 import { useSettings } from "../context/SettingsContext";
 import { ALL_POKEMON } from "../data/pokemon";
 import { getRandomPokemonId } from "../utils/random";
@@ -60,9 +66,11 @@ export function LoadingReveal() {
       accessibilityLabel={strings.loadingLabel}
       accessibilityRole="progressbar"
     >
-      <Animated.Text style={[styles.mark, { transform: [{ scale }] }]}>
-        ?
-      </Animated.Text>
+      <View style={styles.markWrap}>
+        <Animated.Text style={[styles.mark, { transform: [{ scale }] }]}>
+          ?
+        </Animated.Text>
+      </View>
       <Text style={styles.flashName}>{flashName}</Text>
       <Text style={styles.caption}>{strings.loadingLabel}</Text>
     </View>
@@ -75,21 +83,34 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: SPACING.xl * 2,
   },
+  markWrap: {
+    width: 160,
+    height: 160,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.card,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+    ...SHADOWS.raised,
+  },
   mark: {
-    fontSize: 120,
-    fontWeight: "800",
+    fontSize: 104,
+    lineHeight: 120,
+    fontWeight: "900",
     color: COLORS.placeholder,
   },
   flashName: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: COLORS.textSecondary,
-    marginTop: SPACING.m,
+    ...TYPOGRAPHY.screenTitle,
+    color: COLORS.text,
+    marginTop: SPACING.l,
     minHeight: 30,
+    textAlign: "center",
   },
   caption: {
-    fontSize: 16,
+    ...TYPOGRAPHY.body,
     color: COLORS.textSecondary,
     marginTop: SPACING.s,
+    textAlign: "center",
   },
 });

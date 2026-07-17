@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { COLORS } from "../theme/colors";
+import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from "../theme/colors";
 import { useSettings } from "../context/SettingsContext";
 import type { PokemonData } from "../types/pokemon";
 
@@ -56,18 +56,21 @@ const styles = StyleSheet.create({
   placeholder: {
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 24,
-    backgroundColor: "#EDEFF4",
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.surfaceMuted,
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   placeholderMark: {
     fontSize: 72,
+    lineHeight: 82,
     fontWeight: "800",
     color: COLORS.placeholder,
   },
   placeholderText: {
-    fontSize: 13,
+    ...TYPOGRAPHY.caption,
     color: COLORS.textSecondary,
     textAlign: "center",
-    paddingHorizontal: 8,
+    paddingHorizontal: SPACING.s,
   },
 });

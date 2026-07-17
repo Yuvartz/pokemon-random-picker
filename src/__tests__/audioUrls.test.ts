@@ -2,7 +2,6 @@ import {
   AUDIO_BASE_URL,
   bodyAudioUrl,
   buildAnnouncementItems,
-  cryAudioUrl,
   hypeAudioUrl,
   nameAudioUrl,
 } from "../services/audioUrls";
@@ -20,7 +19,6 @@ describe("recorded announcement URLs", () => {
     expect(items.map((i) => i.url)).toEqual([
       `${AUDIO_BASE_URL}/he/hype-3.mp3`,
       `${AUDIO_BASE_URL}/name/25.mp3`,
-      `${AUDIO_BASE_URL}/cry/25.mp3`,
       `${AUDIO_BASE_URL}/he/body-25.mp3`,
     ]);
     // Every non-optional item maps to a valid TTS segment; the cry is
@@ -39,7 +37,6 @@ describe("recorded announcement URLs", () => {
     expect(hypeAudioUrl("en", 0)).toContain("/en/hype-0.mp3");
     expect(bodyAudioUrl("en", 151)).toContain("/en/body-151.mp3");
     expect(nameAudioUrl(1)).toContain("/name/1.mp3");
-    expect(cryAudioUrl(25)).toContain("/cry/25.mp3");
   });
 
   it("pickRandomHypeIndex stays within the phrase list", () => {
@@ -66,7 +63,6 @@ describe("recorded announcement URLs", () => {
       expect(existsSync(join(audioDir, "name", `${id}.mp3`))).toBe(true);
       expect(existsSync(join(audioDir, "he", `body-${id}.mp3`))).toBe(true);
       expect(existsSync(join(audioDir, "en", `body-${id}.mp3`))).toBe(true);
-      expect(existsSync(join(audioDir, "cry", `${id}.mp3`))).toBe(true);
     }
   });
 });

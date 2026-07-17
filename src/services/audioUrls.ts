@@ -21,11 +21,6 @@ export function bodyAudioUrl(language: Language, pokemonId: number): string {
   return `${AUDIO_BASE_URL}/${language}/body-${pokemonId}.mp3`;
 }
 
-/** The Pokémon's official in-game cry (converted to MP3 for iOS). */
-export function cryAudioUrl(pokemonId: number): string {
-  return `${AUDIO_BASE_URL}/cry/${pokemonId}.mp3`;
-}
-
 export type AnnouncementItem = {
   url: string;
   /**
@@ -41,8 +36,7 @@ export type AnnouncementItem = {
 };
 
 /**
- * The full announcement playlist:
- * hype opener → name → the Pokémon's own cry → details.
+ * The full announcement playlist: hype opener → name → details.
  * The segmentIndex fields keep it aligned with buildSpeechSegments so a
  * failure can continue from the same spot with text-to-speech.
  */
@@ -54,12 +48,6 @@ export function buildAnnouncementItems(
   return [
     { url: hypeAudioUrl(language, hypeIndex), segmentIndex: 0 },
     { url: nameAudioUrl(pokemon.id), segmentIndex: 1 },
-    {
-      url: cryAudioUrl(pokemon.id),
-      segmentIndex: null,
-      optional: true,
-      volume: 0.65,
-    },
     { url: bodyAudioUrl(language, pokemon.id), segmentIndex: 2 },
   ];
 }

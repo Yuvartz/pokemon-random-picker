@@ -12,7 +12,13 @@ import { HistoryItem } from "../components/HistoryItem";
 import { useSettings } from "../context/SettingsContext";
 import { useHistory } from "../context/HistoryContext";
 import { getPokemonById } from "../data/pokemon";
-import { COLORS, MIN_TOUCH, SPACING } from "../theme/colors";
+import {
+  COLORS,
+  MIN_TOUCH,
+  RADIUS,
+  SPACING,
+  TYPOGRAPHY,
+} from "../theme/colors";
 import type { RootStackParamList } from "../navigation/types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "History">;
@@ -35,22 +41,46 @@ export function HistoryScreen({ navigation }: Props) {
           onPress={() => navigation.goBack()}
           accessibilityRole="button"
           accessibilityLabel={strings.cancel}
-          style={styles.backButton}
+          style={({ pressed }) => [
+            styles.backButton,
+            pressed && styles.backButtonPressed,
+          ]}
         >
           <Text style={styles.backIcon}>{isRTL ? "→" : "←"}</Text>
         </Pressable>
         <Text style={styles.title} accessibilityRole="header">
           {strings.historyTitle}
         </Text>
-        <View style={styles.backButton} />
+        <View style={styles.headerSpacer} />
       </View>
 
       <FlatList
         data={items}
         keyExtractor={(item) => item.key}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          items.length === 0 && styles.emptyContent,
+        ]}
+        showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
-          <Text style={styles.empty}>{strings.historyEmpty}</Text>
+          <View style={styles.emptyState}>
+            <View style={styles.emptyMarkWrap}>
+              <Text style={styles.emptyMark} accessible={false}>
+                —
+              </Text>
+            </View>
+            <Text
+              style={[
+                styles.empty,
+                {
+                  writingDirection: isRTL ? "rtl" : "ltr",
+                },
+              ]}
+            >
+              {strings.historyEmpty}
+            </Text>
+          </View>
         }
         renderItem={({ item }) => (
           <HistoryItem
@@ -68,14 +98,18 @@ export function HistoryScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F2F3F8",
+    backgroundColor: COLORS.background,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: SPACING.s,
+    minHeight: 64,
+    paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.s,
+    backgroundColor: COLORS.backgroundRaised,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
   },
   headerRTL: {
     flexDirection: "row-reverse",
@@ -85,25 +119,68 @@ const styles = StyleSheet.create({
     minHeight: MIN_TOUCH,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: RADIUS.s,
+  },
+  backButtonPressed: {
+    backgroundColor: COLORS.surfaceStrong,
+    transform: [{ scale: 0.96 }],
+  },
+  headerSpacer: {
+    minWidth: MIN_TOUCH,
+    minHeight: MIN_TOUCH,
   },
   backIcon: {
-    fontSize: 26,
+    fontSize: 24,
+    lineHeight: 30,
     color: COLORS.text,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "800",
+    ...TYPOGRAPHY.screenTitle,
     color: COLORS.text,
+    textAlign: "center",
   },
   content: {
-    padding: SPACING.m,
-    paddingBottom: SPACING.xl,
+    width: "100%",
+    maxWidth: 680,
+    alignSelf: "center",
+    paddingHorizontal: SPACING.m,
+    paddingTop: SPACING.l,
+    paddingBottom: SPACING.xxxl,
+  },
+  emptyContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+  separator: {
+    height: SPACING.sm,
+  },
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: SPACING.l,
+    paddingBottom: SPACING.xxl,
+  },
+  emptyMarkWrap: {
+    width: 88,
+    height: 88,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.surfaceMuted,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: SPACING.m,
+  },
+  emptyMark: {
+    color: COLORS.placeholder,
+    fontSize: 38,
+    lineHeight: 44,
+    fontWeight: "700",
   },
   empty: {
     textAlign: "center",
     color: COLORS.textSecondary,
-    fontSize: 16,
-    marginTop: SPACING.xl,
-    paddingHorizontal: SPACING.l,
+    ...TYPOGRAPHY.body,
+    maxWidth: 360,
   },
 });

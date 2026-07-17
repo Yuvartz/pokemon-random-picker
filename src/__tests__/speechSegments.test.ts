@@ -22,7 +22,7 @@ describe("buildSpeechSegments", () => {
     const segments = buildSpeechSegments(pikachu, "en", "Wow!");
     expect(segments.every((s) => s.language === "en")).toBe(true);
     expect(segments[1].text).toBe("Pikachu.");
-    expect(segments[2].text).toContain("Pokémon number twenty-five");
+    expect(segments[2].text).toContain("Electric type");
   });
 
   it("omits the hype segment when not provided", () => {
@@ -52,8 +52,8 @@ describe("buildSpeechSegments", () => {
   it("every Pokémon has a speech body in both languages", () => {
     for (const p of ALL_POKEMON) {
       expect(p.englishSpeechName.length).toBeGreaterThan(0);
-      expect(p.speechBodyHe).toContain("פוקימון מספר");
-      expect(p.speechBodyEn).toContain("Pokémon number");
+      expect(p.speechBodyHe).toContain("פוקימון מסוג");
+      expect(p.speechBodyEn).toContain("type");
     }
   });
 });

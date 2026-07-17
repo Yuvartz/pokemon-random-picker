@@ -28,7 +28,7 @@ const PLAYBACK_RATES: Record<SpeechRateSetting, number> = {
   fast: 1.2,
 };
 
-const POOL_SIZE = 4; // hype, name, cry, body
+const POOL_SIZE = 3; // hype, name, body
 
 let pool: HTMLAudioElement[] | null = null;
 let unlocked = false;

@@ -1,4 +1,3 @@
-import { numberToWordsEn, numberToWordsHe } from "./numberToWords";
 import { TYPE_NAMES_EN, TYPE_NAMES_HE } from "../localization/typeNames";
 import type {
   Language,
@@ -14,9 +13,12 @@ type SpeechParts = {
   description: string;
 };
 
-/** Everything after the name: number, type, ability, description. */
+/**
+ * Everything after the name: type, ability, description.
+ * Deliberately short — no Pokédex number — so listeners reach the
+ * Pokémon's abilities as fast as possible.
+ */
 export function buildSpeechBodyEn({
-  id,
   types,
   abilityName,
   description,
@@ -27,7 +29,6 @@ export function buildSpeechBodyEn({
       ? `${typeNames.join(" and ")} type`
       : `${typeNames[0]} type`;
   return [
-    `Pokémon number ${numberToWordsEn(id)}.`,
     `${typePhrase}.`,
     `Its main ability is ${abilityName}.`,
     description,
@@ -35,7 +36,6 @@ export function buildSpeechBodyEn({
 }
 
 export function buildSpeechBodyHe({
-  id,
   types,
   abilityName,
   description,
@@ -46,7 +46,6 @@ export function buildSpeechBodyHe({
       ? `פוקימון מסוג ${typeNames[0]} ו${typeNames[1]}`
       : `פוקימון מסוג ${typeNames[0]}`;
   return [
-    `פוקימון מספר ${numberToWordsHe(id)}.`,
     `${typePhrase}.`,
     `היכולת המרכזית שלו היא ${abilityName}.`,
     description,

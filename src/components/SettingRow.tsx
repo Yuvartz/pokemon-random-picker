@@ -1,6 +1,14 @@
 import React from "react";
 import { Pressable, StyleSheet, Switch, Text, View } from "react-native";
-import { COLORS, MIN_TOUCH, RADIUS, SPACING } from "../theme/colors";
+import {
+  COLORS,
+  MIN_TOUCH,
+  RADIUS,
+  SHADOWS,
+  SPACING,
+  TYPOGRAPHY,
+} from "../theme/colors";
+import { DEFAULT_THEME } from "../theme/typeColors";
 import { useSettings } from "../context/SettingsContext";
 
 type SwitchRowProps = {
@@ -13,11 +21,26 @@ export function SettingSwitchRow({ label, value, onValueChange }: SwitchRowProps
   const { isRTL } = useSettings();
   return (
     <View style={[styles.row, isRTL && styles.rowRTL]}>
-      <Text style={styles.label}>{label}</Text>
+      <Text
+        style={[
+          styles.label,
+          {
+            textAlign: isRTL ? "right" : "left",
+            writingDirection: isRTL ? "rtl" : "ltr",
+          },
+        ]}
+      >
+        {label}
+      </Text>
       <Switch
         value={value}
         onValueChange={onValueChange}
         accessibilityLabel={label}
+        trackColor={{
+          false: COLORS.surfaceStrong,
+          true: DEFAULT_THEME.accent,
+        }}
+        thumbColor={COLORS.card}
       />
     </View>
   );
@@ -39,7 +62,15 @@ export function SettingSegmentedRow<T extends string>({
   const { isRTL } = useSettings();
   return (
     <View style={styles.segmentedContainer}>
-      <Text style={[styles.label, isRTL && styles.labelRTL]}>{label}</Text>
+      <Text
+        style={[
+          styles.label,
+          isRTL && styles.labelRTL,
+          { writingDirection: isRTL ? "rtl" : "ltr" },
+        ]}
+      >
+        {label}
+      </Text>
       <View style={[styles.segments, isRTL && styles.rowRTL]}>
         {options.map((option) => {
           const active = option.value === selected;
@@ -50,7 +81,11 @@ export function SettingSegmentedRow<T extends string>({
               accessibilityRole="button"
               accessibilityLabel={`${label}: ${option.label}`}
               accessibilityState={{ selected: active }}
-              style={[styles.segment, active && styles.segmentActive]}
+              style={({ pressed }) => [
+                styles.segment,
+                active && styles.segmentActive,
+                pressed && styles.segmentPressed,
+              ]}
             >
               <Text
                 style={[styles.segmentText, active && styles.segmentTextActive]}
@@ -71,14 +106,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     minHeight: MIN_TOUCH,
-    paddingVertical: SPACING.s,
+    paddingVertical: SPACING.sm,
+    gap: SPACING.m,
   },
   rowRTL: {
     flexDirection: "row-reverse",
   },
   label: {
-    fontSize: 16,
-    fontWeight: "600",
+    ...TYPOGRAPHY.bodyStrong,
     color: COLORS.text,
     flexShrink: 1,
   },
@@ -86,37 +121,43 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
   segmentedContainer: {
-    paddingVertical: SPACING.s,
+    paddingVertical: SPACING.sm,
   },
   segments: {
     flexDirection: "row",
-    marginTop: SPACING.s,
-    backgroundColor: "#EEF0F5",
-    borderRadius: RADIUS.badge,
+    marginTop: SPACING.sm,
+    backgroundColor: COLORS.surfaceMuted,
+    borderRadius: RADIUS.s,
+    borderWidth: 1,
+    borderColor: COLORS.border,
     padding: 4,
     gap: 4,
   },
   segment: {
     flex: 1,
-    minHeight: 40,
-    borderRadius: RADIUS.badge - 4,
+    minHeight: MIN_TOUCH,
+    borderRadius: RADIUS.xs,
+    paddingHorizontal: SPACING.s,
     alignItems: "center",
     justifyContent: "center",
   },
   segmentActive: {
     backgroundColor: COLORS.card,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
+    ...SHADOWS.subtle,
+  },
+  segmentPressed: {
+    opacity: 0.72,
+    transform: [{ scale: 0.985 }],
   },
   segmentText: {
-    fontSize: 15,
-    fontWeight: "600",
+    ...TYPOGRAPHY.label,
+    fontSize: 14,
+    lineHeight: 20,
     color: COLORS.textSecondary,
+    textAlign: "center",
   },
   segmentTextActive: {
     color: COLORS.text,
+    fontWeight: "800",
   },
 });

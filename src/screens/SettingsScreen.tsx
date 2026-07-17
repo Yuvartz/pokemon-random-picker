@@ -16,7 +16,15 @@ import {
 import { useSettings } from "../context/SettingsContext";
 import { useHistory } from "../context/HistoryContext";
 import { stopSpeech } from "../services/speech";
-import { COLORS, MIN_TOUCH, RADIUS, SPACING } from "../theme/colors";
+import {
+  COLORS,
+  MIN_TOUCH,
+  RADIUS,
+  SHADOWS,
+  SPACING,
+  TYPOGRAPHY,
+} from "../theme/colors";
+import { DEFAULT_THEME } from "../theme/typeColors";
 import type { RootStackParamList } from "../navigation/types";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Settings">;
@@ -43,17 +51,23 @@ export function SettingsScreen({ navigation }: Props) {
           onPress={() => navigation.goBack()}
           accessibilityRole="button"
           accessibilityLabel={strings.cancel}
-          style={styles.backButton}
+          style={({ pressed }) => [
+            styles.backButton,
+            pressed && styles.backButtonPressed,
+          ]}
         >
           <Text style={styles.backIcon}>{isRTL ? "→" : "←"}</Text>
         </Pressable>
         <Text style={styles.title} accessibilityRole="header">
           {strings.settingsTitle}
         </Text>
-        <View style={styles.backButton} />
+        <View style={styles.headerSpacer} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.section}>
           <SettingSegmentedRow
             label={strings.languageLabel}
@@ -99,7 +113,7 @@ export function SettingsScreen({ navigation }: Props) {
             accessibilityLabel={strings.clearHistoryLabel}
             style={({ pressed }) => [
               styles.clearButton,
-              { opacity: pressed ? 0.7 : 1 },
+              pressed && styles.clearButtonPressed,
             ]}
           >
             <Text style={styles.clearButtonText}>
@@ -109,12 +123,20 @@ export function SettingsScreen({ navigation }: Props) {
         </View>
 
         <View style={styles.section}>
-          <Text
-            style={[styles.aboutTitle, isRTL && styles.textRTL]}
-            accessibilityRole="header"
-          >
-            {strings.aboutTitle}
-          </Text>
+          <View style={[styles.aboutHeader, isRTL && styles.headerRTL]}>
+            <View
+              style={[
+                styles.aboutAccent,
+                { backgroundColor: DEFAULT_THEME.accent },
+              ]}
+            />
+            <Text
+              style={[styles.aboutTitle, isRTL && styles.textRTL]}
+              accessibilityRole="header"
+            >
+              {strings.aboutTitle}
+            </Text>
+          </View>
           <Text
             style={[
               styles.aboutText,
@@ -133,14 +155,18 @@ export function SettingsScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F2F3F8",
+    backgroundColor: COLORS.background,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: SPACING.s,
+    minHeight: 64,
+    paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.s,
+    backgroundColor: COLORS.backgroundRaised,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
   },
   headerRTL: {
     flexDirection: "row-reverse",
@@ -150,46 +176,83 @@ const styles = StyleSheet.create({
     minHeight: MIN_TOUCH,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: RADIUS.s,
+  },
+  backButtonPressed: {
+    backgroundColor: COLORS.surfaceStrong,
+    transform: [{ scale: 0.96 }],
+  },
+  headerSpacer: {
+    minWidth: MIN_TOUCH,
+    minHeight: MIN_TOUCH,
   },
   backIcon: {
-    fontSize: 26,
+    fontSize: 24,
+    lineHeight: 30,
     color: COLORS.text,
   },
   title: {
-    fontSize: 20,
-    fontWeight: "800",
+    ...TYPOGRAPHY.screenTitle,
     color: COLORS.text,
+    textAlign: "center",
   },
   content: {
-    padding: SPACING.m,
-    paddingBottom: SPACING.xl,
+    width: "100%",
+    maxWidth: 680,
+    alignSelf: "center",
+    paddingHorizontal: SPACING.m,
+    paddingTop: SPACING.l,
+    paddingBottom: SPACING.xxxl,
   },
   section: {
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.card,
-    padding: SPACING.m,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingHorizontal: SPACING.m,
+    paddingVertical: SPACING.s,
     marginBottom: SPACING.m,
+    ...SHADOWS.subtle,
   },
   clearButton: {
     minHeight: MIN_TOUCH,
+    borderRadius: RADIUS.s,
+    borderWidth: 1,
+    borderColor: COLORS.dangerBorder,
+    backgroundColor: COLORS.dangerBackground,
+    paddingHorizontal: SPACING.m,
     alignItems: "center",
     justifyContent: "center",
   },
-  clearButtonText: {
-    color: COLORS.danger,
-    fontSize: 16,
-    fontWeight: "700",
+  clearButtonPressed: {
+    opacity: 0.78,
+    transform: [{ scale: 0.99 }],
   },
-  aboutTitle: {
-    fontSize: 16,
-    fontWeight: "800",
-    color: COLORS.text,
+  clearButtonText: {
+    ...TYPOGRAPHY.bodyStrong,
+    color: COLORS.danger,
+  },
+  aboutHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: SPACING.s,
+    marginTop: SPACING.s,
     marginBottom: SPACING.s,
   },
+  aboutAccent: {
+    width: 4,
+    height: 20,
+    borderRadius: RADIUS.pill,
+  },
+  aboutTitle: {
+    ...TYPOGRAPHY.sectionTitle,
+    color: COLORS.text,
+    flex: 1,
+  },
   aboutText: {
-    fontSize: 14,
+    ...TYPOGRAPHY.body,
     color: COLORS.textSecondary,
-    lineHeight: 21,
+    paddingBottom: SPACING.s,
   },
   textRTL: {
     textAlign: "right",

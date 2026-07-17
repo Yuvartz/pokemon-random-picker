@@ -24,10 +24,10 @@ describe("local Pokémon data", () => {
 
   it("every Pokémon has speech text in both languages", () => {
     for (const p of ALL_POKEMON) {
-      expect(p.speechTextEn).toContain("Pokémon number");
+      expect(p.speechTextEn).toContain("type");
       expect(p.speechTextEn.length).toBeGreaterThan(20);
       expect(p.speechTextHe.length).toBeGreaterThan(20);
-      expect(p.speechTextHe).toContain("פוקימון מספר");
+      expect(p.speechTextHe).toContain("פוקימון מסוג");
     }
   });
 
@@ -61,8 +61,8 @@ describe("local Pokémon data", () => {
     expect(pikachu?.hebrewName).toBe("פיקאצ'ו");
     expect(pikachu?.types).toEqual(["electric"]);
     expect(pikachu?.primaryAbilityEn).toBe("Static");
-    expect(pikachu?.speechTextEn).toContain("Pokémon number twenty-five");
-    expect(pikachu?.speechTextHe).toContain("פוקימון מספר עשרים וחמש");
+    expect(pikachu?.speechTextEn).toContain("Electric type");
+    expect(pikachu?.speechTextHe).toContain("פוקימון מסוג חשמל");
 
     const mew = getPokemonById(151);
     expect(mew?.englishName).toBe("Mew");

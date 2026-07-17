@@ -6,7 +6,14 @@ import { SpeechControls } from "./SpeechControls";
 import { PrimaryButton } from "./PrimaryButton";
 import { useSettings } from "../context/SettingsContext";
 import { getTypeTheme } from "../theme/typeColors";
-import { COLORS, MIN_TOUCH, RADIUS, SPACING } from "../theme/colors";
+import {
+  COLORS,
+  MIN_TOUCH,
+  RADIUS,
+  SHADOWS,
+  SPACING,
+  TYPOGRAPHY,
+} from "../theme/colors";
 import { translateType } from "../localization/typeNames";
 import { getPokemonById } from "../data/pokemon";
 import { hasEvolutionFamily } from "../utils/evolutions";
@@ -66,21 +73,52 @@ export function PokemonCard({
     : null;
 
   return (
-    <View style={[styles.frame, { backgroundColor: theme.accent }]}>
-      <View style={styles.card}>
+    <View
+      style={[
+        styles.frame,
+        { backgroundColor: theme.accent, borderColor: theme.accent },
+      ]}
+    >
+      <View
+        style={[
+          styles.foilLine,
+          { backgroundColor: COLORS.whiteOverlay },
+        ]}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      />
+      <View style={[styles.card, { borderColor: theme.background }]}>
         {/* Header: stage chip, name, HP */}
         <View style={[styles.headerRow, isRTL && styles.rowRTL]}>
-          <View style={[styles.stageChip, { backgroundColor: theme.background }]}>
+          <View
+            style={[
+              styles.stageChip,
+              {
+                backgroundColor: theme.background,
+                borderColor: theme.accent,
+              },
+            ]}
+          >
             <Text style={[styles.stageChipText, { color: theme.accent }]}>
               {stageLabel}
             </Text>
           </View>
-          <Text
-            style={styles.hp}
-            accessibilityLabel={`HP ${pokemon.stats.hp}`}
+          <View
+            style={[
+              styles.hpBadge,
+              {
+                backgroundColor: theme.background,
+                borderColor: theme.accent,
+              },
+            ]}
           >
-            HP {pokemon.stats.hp}
-          </Text>
+            <Text
+              style={[styles.hp, { color: theme.accent }]}
+              accessibilityLabel={`HP ${pokemon.stats.hp}`}
+            >
+              HP {pokemon.stats.hp}
+            </Text>
+          </View>
         </View>
         <Text style={styles.primaryName} accessibilityRole="header">
           {primaryName}
@@ -91,6 +129,11 @@ export function PokemonCard({
             {strings.evolvesFromLabel} {evolvesFromName}
           </Text>
         )}
+        <View
+          style={[styles.nameRule, { backgroundColor: theme.accent }]}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        />
 
         {/* Artwork window */}
         <View
@@ -99,6 +142,19 @@ export function PokemonCard({
             { borderColor: theme.accent, backgroundColor: theme.background },
           ]}
         >
+          <View
+            style={[
+              styles.artworkHalo,
+              {
+                width: artworkSize * 0.76,
+                height: artworkSize * 0.76,
+                borderRadius: artworkSize,
+                borderColor: theme.accent,
+              },
+            ]}
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          />
           <PokemonArtwork pokemon={pokemon} size={artworkSize} />
         </View>
 
@@ -114,13 +170,28 @@ export function PokemonCard({
 
         {/* Ability entry, styled like a card move */}
         <View
-          style={[styles.abilityBlock, { backgroundColor: theme.background }]}
+          style={[
+            styles.abilityBlock,
+            {
+              backgroundColor: theme.background,
+              borderColor: theme.accent,
+            },
+          ]}
         >
           <View style={[styles.abilityHeader, isRTL && styles.rowRTL]}>
             <Text style={[styles.abilityLabel, { textAlign }]}>
               {strings.abilityLabel}
             </Text>
-            <Text style={[styles.abilityName, { color: theme.accent }]}>
+            <Text
+              style={[
+                styles.abilityName,
+                {
+                  color: theme.accent,
+                  textAlign,
+                  writingDirection,
+                },
+              ]}
+            >
               {ability}
             </Text>
           </View>
@@ -139,17 +210,12 @@ export function PokemonCard({
         {/* Card footer */}
         <View style={[styles.footerRow, { borderTopColor: theme.background }]}>
           <View style={styles.footerItem}>
-            <Text style={styles.footerLabel}>{strings.pokedexNumber}</Text>
-            <Text style={[styles.footerValue, { color: theme.accent }]}>
-              {formatPokedexNumber(pokemon.id)}
-            </Text>
-          </View>
-          <View style={styles.footerItem}>
             <Text style={styles.footerLabel}>{strings.heightLabel}</Text>
             <Text style={styles.footerValue}>
               {pokemon.heightM} {strings.metersUnit}
             </Text>
           </View>
+          <View style={styles.footerDivider} />
           <View style={styles.footerItem}>
             <Text style={styles.footerLabel}>{strings.weightLabel}</Text>
             <Text style={styles.footerValue}>
@@ -180,130 +246,182 @@ export function PokemonCard({
 
 const styles = StyleSheet.create({
   frame: {
-    borderRadius: RADIUS.card + 6,
-    padding: 10,
+    borderRadius: RADIUS.cardOuter,
+    borderWidth: 1,
+    padding: SPACING.s,
     width: "100%",
-    shadowColor: "#000",
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 5,
+    overflow: "visible",
+    ...SHADOWS.card,
+  },
+  foilLine: {
+    position: "absolute",
+    top: 4,
+    left: 26,
+    right: 26,
+    height: 2,
+    borderRadius: RADIUS.pill,
   },
   card: {
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.card,
-    padding: SPACING.m,
+    borderWidth: 1,
+    padding: SPACING.ml,
   },
   headerRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: SPACING.s,
   },
   rowRTL: {
     flexDirection: "row-reverse",
   },
   stageChip: {
-    borderRadius: RADIUS.badge,
-    paddingHorizontal: SPACING.m,
-    paddingVertical: 4,
+    minHeight: 30,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    alignItems: "center",
+    justifyContent: "center",
   },
   stageChipText: {
-    fontSize: 13,
+    ...TYPOGRAPHY.caption,
     fontWeight: "800",
   },
+  hpBadge: {
+    minHeight: 34,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1,
+    paddingHorizontal: SPACING.sm,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   hp: {
-    fontSize: 20,
+    fontSize: 17,
+    lineHeight: 22,
     fontWeight: "900",
-    color: "#C0392B",
   },
   primaryName: {
-    fontSize: 30,
-    fontWeight: "900",
+    ...TYPOGRAPHY.cardTitle,
     color: COLORS.text,
     textAlign: "center",
-    marginTop: SPACING.xs,
+    marginTop: SPACING.s,
   },
   secondaryName: {
-    fontSize: 16,
+    ...TYPOGRAPHY.body,
     color: COLORS.textSecondary,
     textAlign: "center",
   },
   evolvesFrom: {
-    fontSize: 13,
+    ...TYPOGRAPHY.caption,
     fontWeight: "700",
     textAlign: "center",
-    marginTop: 2,
+    marginTop: SPACING.xs,
+  },
+  nameRule: {
+    alignSelf: "center",
+    width: 40,
+    height: 3,
+    borderRadius: RADIUS.pill,
+    marginTop: SPACING.sm,
+    opacity: 0.8,
   },
   artworkWindow: {
-    borderWidth: 3,
-    borderRadius: 18,
+    minHeight: 220,
+    borderWidth: 2,
+    borderRadius: RADIUS.button,
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: SPACING.s,
-    marginTop: SPACING.s,
+    marginTop: SPACING.sm,
+    overflow: "hidden",
+  },
+  artworkHalo: {
+    position: "absolute",
+    borderWidth: 1,
+    opacity: 0.16,
+    backgroundColor: COLORS.whiteOverlay,
   },
   badgeRow: {
     flexDirection: "row",
     justifyContent: "center",
     flexWrap: "wrap",
-    marginTop: SPACING.s,
-    marginBottom: SPACING.s,
+    marginTop: SPACING.sm,
+    marginBottom: SPACING.sm,
   },
   abilityBlock: {
-    borderRadius: 14,
+    borderRadius: RADIUS.s,
+    borderWidth: 1,
     padding: SPACING.m,
-    marginBottom: SPACING.s,
+    marginBottom: SPACING.sm,
   },
   abilityHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 2,
+    marginBottom: SPACING.xs,
+    gap: SPACING.s,
   },
   abilityLabel: {
-    fontSize: 12,
-    fontWeight: "700",
+    ...TYPOGRAPHY.caption,
+    color: COLORS.textSecondary,
+    textTransform: "uppercase",
+    letterSpacing: 0.7,
+  },
+  abilityName: {
+    fontSize: 17,
+    lineHeight: 22,
+    fontWeight: "800",
+    flexShrink: 1,
+  },
+  abilityText: {
+    ...TYPOGRAPHY.body,
+    fontSize: 14,
+    lineHeight: 21,
+    color: COLORS.text,
+  },
+  flavorText: {
+    ...TYPOGRAPHY.body,
+    fontSize: 14,
+    lineHeight: 21,
+    fontStyle: "italic",
+    color: COLORS.textSecondary,
+    marginBottom: SPACING.sm,
+  },
+  footerRow: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    justifyContent: "center",
+    borderTopWidth: 2,
+    paddingTop: SPACING.sm,
+    marginBottom: SPACING.m,
+  },
+  footerItem: {
+    flex: 1,
+    alignItems: "center",
+    minWidth: MIN_TOUCH,
+  },
+  footerDivider: {
+    width: 1,
+    minHeight: 36,
+    backgroundColor: COLORS.border,
+  },
+  footerLabel: {
+    ...TYPOGRAPHY.caption,
+    fontSize: 11,
+    lineHeight: 15,
     color: COLORS.textSecondary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  abilityName: {
-    fontSize: 18,
-    fontWeight: "800",
-  },
-  abilityText: {
-    fontSize: 14,
-    color: COLORS.text,
-    lineHeight: 20,
-  },
-  flavorText: {
-    fontSize: 14,
-    fontStyle: "italic",
-    color: COLORS.textSecondary,
-    lineHeight: 21,
-    marginBottom: SPACING.s,
-  },
-  footerRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    borderTopWidth: 2,
-    paddingTop: SPACING.s,
-    marginBottom: SPACING.m,
-  },
-  footerItem: {
-    alignItems: "center",
-    minWidth: MIN_TOUCH,
-  },
-  footerLabel: {
-    fontSize: 11,
-    fontWeight: "700",
-    color: COLORS.textSecondary,
-    textTransform: "uppercase",
-  },
   footerValue: {
+    ...TYPOGRAPHY.label,
     fontSize: 15,
+    lineHeight: 21,
     fontWeight: "800",
     color: COLORS.text,
+    marginTop: 2,
   },
   evolutionsButton: {
     marginTop: SPACING.m,

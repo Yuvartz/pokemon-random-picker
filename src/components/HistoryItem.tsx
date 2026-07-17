@@ -3,7 +3,14 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useSettings } from "../context/SettingsContext";
 import { formatPokedexNumber } from "./PokemonCard";
-import { COLORS, MIN_TOUCH, RADIUS, SPACING } from "../theme/colors";
+import {
+  COLORS,
+  MIN_TOUCH,
+  RADIUS,
+  SHADOWS,
+  SPACING,
+  TYPOGRAPHY,
+} from "../theme/colors";
 import { getTypeTheme } from "../theme/typeColors";
 import type { PokemonData } from "../types/pokemon";
 
@@ -26,10 +33,19 @@ export function HistoryItem({ pokemon, onPress }: Props) {
       style={({ pressed }) => [
         styles.item,
         isRTL && styles.itemRTL,
-        { opacity: pressed ? 0.7 : 1 },
+        {
+          borderStartColor: theme.accent,
+          backgroundColor: pressed ? theme.background : COLORS.card,
+          transform: [{ scale: pressed ? 0.985 : 1 }],
+        },
       ]}
     >
-      <View style={[styles.thumbWrap, { backgroundColor: theme.background }]}>
+      <View
+        style={[
+          styles.thumbWrap,
+          { backgroundColor: theme.background, borderColor: theme.accent },
+        ]}
+      >
         <Image
           source={{ uri: pokemon.fallbackSpriteUrl }}
           style={styles.thumb}
@@ -38,10 +54,25 @@ export function HistoryItem({ pokemon, onPress }: Props) {
         />
       </View>
       <View style={styles.textWrap}>
-        <Text style={[styles.number, { color: theme.accent }]}>
+        <Text
+          style={[
+            styles.number,
+            { color: theme.accent, textAlign: isRTL ? "right" : "left" },
+          ]}
+        >
           {formatPokedexNumber(pokemon.id)}
         </Text>
-        <Text style={styles.name}>{name}</Text>
+        <Text
+          style={[
+            styles.name,
+            {
+              textAlign: isRTL ? "right" : "left",
+              writingDirection: isRTL ? "rtl" : "ltr",
+            },
+          ]}
+        >
+          {name}
+        </Text>
       </View>
     </Pressable>
   );
@@ -52,33 +83,45 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: COLORS.card,
-    borderRadius: RADIUS.badge,
-    padding: SPACING.s,
-    marginVertical: SPACING.xs,
-    minHeight: MIN_TOUCH + 8,
-    gap: SPACING.m,
+    borderRadius: RADIUS.s,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderStartWidth: 4,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.s,
+    minHeight: 76,
+    gap: SPACING.sm,
+    ...SHADOWS.subtle,
   },
   itemRTL: {
     flexDirection: "row-reverse",
   },
   thumbWrap: {
-    borderRadius: 12,
-    padding: 4,
+    width: 58,
+    height: 58,
+    borderRadius: RADIUS.s,
+    borderWidth: 1,
+    padding: SPACING.xs,
+    alignItems: "center",
+    justifyContent: "center",
   },
   thumb: {
-    width: 48,
-    height: 48,
+    width: 50,
+    height: 50,
   },
   textWrap: {
     flex: 1,
+    minWidth: MIN_TOUCH,
   },
   number: {
-    fontSize: 13,
+    ...TYPOGRAPHY.caption,
     fontWeight: "800",
+    marginBottom: 2,
   },
   name: {
-    fontSize: 17,
-    fontWeight: "700",
+    ...TYPOGRAPHY.bodyStrong,
+    fontSize: 18,
+    lineHeight: 24,
     color: COLORS.text,
   },
 });

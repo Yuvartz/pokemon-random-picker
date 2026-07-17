@@ -24,13 +24,21 @@ import {
 import { getPokemonById } from "../data/pokemon";
 import { getRandomPokemonId } from "../utils/random";
 import { getTypeTheme, DEFAULT_THEME } from "../theme/typeColors";
-import { COLORS, MIN_TOUCH, SPACING } from "../theme/colors";
+import {
+  COLORS,
+  MIN_TOUCH,
+  RADIUS,
+  SHADOWS,
+  SPACING,
+  TYPOGRAPHY,
+} from "../theme/colors";
 import { lightTap } from "../utils/haptics";
 import type { PokemonData } from "../types/pokemon";
 import type { RootStackParamList } from "../navigation/types";
 
-const REVEAL_DURATION_MS = 1000;
-const SPEECH_DELAY_MS = 500;
+// Kept short on purpose — get to the Pokémon and its info fast.
+const REVEAL_DURATION_MS = 600;
+const SPEECH_DELAY_MS = 150;
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
@@ -196,7 +204,10 @@ export function HomeScreen({ navigation, route }: Props) {
             onPress={() => navigation.navigate("History")}
             accessibilityRole="button"
             accessibilityLabel={strings.historyButton}
-            style={styles.headerButton}
+            style={({ pressed }) => [
+              styles.headerButton,
+              pressed && styles.headerButtonPressed,
+            ]}
           >
             <Text style={styles.headerButtonIcon}>🕘</Text>
           </Pressable>
@@ -204,7 +215,10 @@ export function HomeScreen({ navigation, route }: Props) {
             onPress={() => navigation.navigate("Settings")}
             accessibilityRole="button"
             accessibilityLabel={strings.settingsButton}
-            style={styles.headerButton}
+            style={({ pressed }) => [
+              styles.headerButton,
+              pressed && styles.headerButtonPressed,
+            ]}
           >
             <Text style={styles.headerButtonIcon}>⚙️</Text>
           </Pressable>
@@ -240,8 +254,17 @@ export function HomeScreen({ navigation, route }: Props) {
           </Animated.View>
         ) : (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyMark}>?</Text>
-            <Text style={styles.tagline}>{strings.tagline}</Text>
+            <View style={styles.emptyMarkWrap}>
+              <Text style={styles.emptyMark}>?</Text>
+            </View>
+            <Text
+              style={[
+                styles.tagline,
+                { writingDirection: isRTL ? "rtl" : "ltr" },
+              ]}
+            >
+              {strings.tagline}
+            </Text>
           </View>
         )}
       </ScrollView>
@@ -259,8 +282,9 @@ export function HomeScreen({ navigation, route }: Props) {
                 styles.backButtonFooter,
                 {
                   borderColor: theme.accent,
-                  opacity: isRevealing ? 0.5 : pressed ? 0.7 : 1,
                 },
+                pressed && !isRevealing && styles.backButtonFooterPressed,
+                isRevealing && styles.backButtonFooterDisabled,
               ]}
             >
               <Text style={[styles.backButtonFooterText, { color: theme.accent }]}>
@@ -295,15 +319,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    minHeight: 64,
     paddingHorizontal: SPACING.m,
     paddingVertical: SPACING.s,
+    backgroundColor: COLORS.whiteOverlay,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
   },
   headerRTL: {
     flexDirection: "row-reverse",
   },
   title: {
-    fontSize: 20,
-    fontWeight: "800",
+    ...TYPOGRAPHY.screenTitle,
     color: COLORS.text,
     flexShrink: 1,
   },
@@ -316,40 +343,77 @@ const styles = StyleSheet.create({
     minHeight: MIN_TOUCH,
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: RADIUS.s,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.card,
+    ...SHADOWS.subtle,
+  },
+  headerButtonPressed: {
+    backgroundColor: COLORS.surfaceStrong,
+    transform: [{ scale: 0.95 }],
+    shadowOpacity: 0,
+    elevation: 0,
   },
   headerButtonIcon: {
-    fontSize: 24,
+    fontSize: 22,
+    lineHeight: 28,
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
+    width: "100%",
+    maxWidth: 680,
+    alignSelf: "center",
     paddingHorizontal: SPACING.m,
-    paddingBottom: SPACING.m,
+    paddingTop: SPACING.l,
+    paddingBottom: SPACING.l,
   },
   emptyState: {
     alignItems: "center",
     paddingVertical: SPACING.xl,
   },
+  emptyMarkWrap: {
+    width: 180,
+    height: 180,
+    borderRadius: RADIUS.pill,
+    backgroundColor: COLORS.whiteOverlay,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   emptyMark: {
-    fontSize: 140,
-    fontWeight: "800",
+    fontSize: 116,
+    lineHeight: 132,
+    fontWeight: "900",
     color: COLORS.placeholder,
   },
   tagline: {
+    ...TYPOGRAPHY.body,
     fontSize: 18,
+    lineHeight: 27,
+    fontWeight: "600",
     color: COLORS.textSecondary,
     textAlign: "center",
-    marginTop: SPACING.m,
+    marginTop: SPACING.l,
     paddingHorizontal: SPACING.l,
+    maxWidth: 440,
   },
   footer: {
     paddingHorizontal: SPACING.m,
-    paddingTop: SPACING.s,
-    paddingBottom: SPACING.l,
+    paddingTop: SPACING.sm,
+    paddingBottom: SPACING.m,
+    backgroundColor: COLORS.backgroundRaised,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
   },
   footerButtons: {
     flexDirection: "row",
     alignItems: "stretch",
+    width: "100%",
+    maxWidth: 680,
+    alignSelf: "center",
     gap: SPACING.s,
   },
   mainButton: {
@@ -358,15 +422,25 @@ const styles = StyleSheet.create({
   backButtonFooter: {
     minHeight: 56,
     minWidth: MIN_TOUCH,
-    borderRadius: 28,
-    borderWidth: 2,
+    borderRadius: RADIUS.button,
+    borderWidth: 1.5,
     backgroundColor: COLORS.card,
     paddingHorizontal: SPACING.m,
     alignItems: "center",
     justifyContent: "center",
   },
+  backButtonFooterPressed: {
+    backgroundColor: COLORS.surfaceMuted,
+    opacity: 0.82,
+    transform: [{ translateY: 1 }, { scale: 0.99 }],
+  },
+  backButtonFooterDisabled: {
+    opacity: 0.48,
+  },
   backButtonFooterText: {
-    fontSize: 15,
-    fontWeight: "700",
+    ...TYPOGRAPHY.label,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "800",
   },
 });

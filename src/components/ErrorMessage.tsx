@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { COLORS, RADIUS, SPACING } from "../theme/colors";
+import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from "../theme/colors";
 
 type Props = {
   message: string;
@@ -16,16 +16,18 @@ export function ErrorMessage({ message }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FDF1EF",
-    borderRadius: RADIUS.badge,
+    backgroundColor: COLORS.dangerBackground,
+    borderRadius: RADIUS.s,
     borderWidth: 1,
-    borderColor: "#F2C7C0",
-    padding: SPACING.m,
+    borderColor: COLORS.dangerBorder,
+    paddingHorizontal: SPACING.m,
+    paddingVertical: SPACING.sm,
     marginVertical: SPACING.s,
   },
   text: {
     color: COLORS.danger,
-    fontSize: 15,
+    ...TYPOGRAPHY.body,
+    fontWeight: "600",
     textAlign: "center",
   },
 });

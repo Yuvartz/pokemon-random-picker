@@ -6,7 +6,14 @@ import {
   type StyleProp,
   type ViewStyle,
 } from "react-native";
-import { COLORS, MIN_TOUCH, RADIUS, SPACING } from "../theme/colors";
+import {
+  COLORS,
+  MIN_TOUCH,
+  RADIUS,
+  SHADOWS,
+  SPACING,
+  TYPOGRAPHY,
+} from "../theme/colors";
 
 type Props = {
   label: string;
@@ -35,7 +42,9 @@ export function PrimaryButton({
       accessibilityState={{ disabled: !!disabled }}
       style={({ pressed }) => [
         styles.button,
-        { backgroundColor: color, opacity: disabled ? 0.5 : pressed ? 0.85 : 1 },
+        { backgroundColor: color },
+        pressed && !disabled && styles.buttonPressed,
+        disabled && styles.buttonDisabled,
         style,
       ]}
     >
@@ -51,20 +60,33 @@ const styles = StyleSheet.create({
     minHeight: 56,
     minWidth: MIN_TOUCH,
     borderRadius: RADIUS.button,
+    borderWidth: 1,
+    borderColor: COLORS.whiteOverlay,
     paddingHorizontal: SPACING.l,
-    paddingVertical: SPACING.m,
+    paddingVertical: SPACING.sm,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
+    ...SHADOWS.raised,
+  },
+  buttonPressed: {
+    opacity: 0.9,
+    transform: [{ translateY: 1 }, { scale: 0.99 }],
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
+  },
+  buttonDisabled: {
+    opacity: 0.48,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   label: {
+    ...TYPOGRAPHY.bodyStrong,
     color: COLORS.buttonText,
     fontSize: 18,
-    fontWeight: "700",
+    lineHeight: 24,
+    fontWeight: "800",
     textAlign: "center",
   },
 });

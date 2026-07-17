@@ -16,6 +16,7 @@
 import {
   existsSync,
   mkdirSync,
+  readFileSync,
   statSync,
   writeFileSync,
 } from "node:fs";
@@ -32,7 +33,10 @@ const OUT_DIR = resolve(
 );
 
 const VOICE_ID = "cgSgspJ2msm6clMCkdW9"; // Jessica — playful, bright, warm
-const MODEL_ID = "eleven_v3";
+// multilingual_v2 rather than the newer eleven_v3: v3 is alpha and
+// sometimes hallucinates spelled-out gibberish on very short clips
+// (e.g. single Pokémon names).
+const MODEL_ID = "eleven_multilingual_v2";
 const OUTPUT_FORMAT = "mp3_44100_128";
 const CONCURRENCY = 2; // free-tier concurrency limit
 const MAX_ATTEMPTS = 4;
@@ -92,7 +96,13 @@ async function synthesize(job: Job): Promise<void> {
 }
 
 async function processJob(job: Job): Promise<"done" | "skipped"> {
-  if (!FORCE && existsSync(markerPath(job.file))) return "skipped";
+  // Skip only clips already recorded with the CURRENT model, so a rerun
+  // after a quota reset automatically upgrades leftovers from older
+  // models (e.g. eleven_v3 clips that had gibberish artifacts).
+  if (!FORCE && existsSync(markerPath(job.file))) {
+    const recordedWith = readFileSync(markerPath(job.file), "utf8").trim();
+    if (recordedWith === MODEL_ID) return "skipped";
+  }
 
   let lastError: unknown;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
