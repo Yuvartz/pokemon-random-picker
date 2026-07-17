@@ -23,6 +23,35 @@ export type SpeakOptions = {
   onError?: (error: unknown) => void;
 };
 
+const LANGUAGE_PREFIXES: Record<Language, string[]> = {
+  he: ["he", "iw"], // "iw" is the legacy Hebrew code some engines report
+  en: ["en"],
+};
+
+/**
+ * No-op on native platforms. On web (see speech.web.ts) this must be
+ * called inside a user tap to satisfy the browser's autoplay policy.
+ */
+export function unlockSpeech(): void {}
+
+/** True when a voice for the language exists (optimistic when unknown). */
+export async function getSpeechAvailability(
+  language: Language
+): Promise<boolean> {
+  try {
+    const voices = await Speech.getAvailableVoicesAsync();
+    // Some engines report an empty list even when speech works; assume OK
+    // and rely on runtime onError handling instead of blocking the feature.
+    if (voices.length === 0) return true;
+    return voices.some((voice) => {
+      const lang = (voice.language ?? "").toLowerCase().replace("_", "-");
+      return LANGUAGE_PREFIXES[language].some((p) => lang.startsWith(p));
+    });
+  } catch {
+    return true;
+  }
+}
+
 // Incremented on every speak/stop so callbacks from an interrupted
 // utterance can never overwrite the state of a newer one.
 let utteranceToken = 0;

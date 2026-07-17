@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as Speech from "expo-speech";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { PokemonCard } from "../components/PokemonCard";
 import { PrimaryButton } from "../components/PrimaryButton";
@@ -17,6 +16,7 @@ import { ErrorMessage } from "../components/ErrorMessage";
 import { useSettings } from "../context/SettingsContext";
 import { useHistory } from "../context/HistoryContext";
 import { useSpeech } from "../hooks/useSpeech";
+import { getSpeechAvailability, unlockSpeech } from "../services/speech";
 import { getPokemonById } from "../data/pokemon";
 import { getRandomPokemonId } from "../utils/random";
 import { getTypeTheme, DEFAULT_THEME } from "../theme/typeColors";
@@ -54,14 +54,9 @@ export function HomeScreen({ navigation, route }: Props) {
   // Best-effort check that a voice exists for the selected language.
   useEffect(() => {
     let cancelled = false;
-    Speech.getAvailableVoicesAsync()
-      .then((voices) => {
-        if (cancelled) return;
-        if (voices.length === 0) return; // Some engines report none; assume OK.
-        const prefix = settings.language;
-        setSpeechAvailable(
-          voices.some((v) => v.language?.toLowerCase().startsWith(prefix))
-        );
+    getSpeechAvailability(settings.language)
+      .then((available) => {
+        if (!cancelled) setSpeechAvailable(available);
       })
       .catch(() => {
         // If the check itself fails, keep speech enabled and rely on onError.
@@ -129,6 +124,9 @@ export function HomeScreen({ navigation, route }: Props) {
   );
 
   const chooseRandom = useCallback(() => {
+    // Must run synchronously inside the tap: unlocks browser speech so the
+    // delayed automatic reading is allowed (no-op on iOS/Android native).
+    unlockSpeech();
     revealPokemon(getRandomPokemonId(), true);
   }, [revealPokemon]);
 
