@@ -11,13 +11,14 @@
  * the playlist index, so the caller can continue from the same spot with
  * the device's text-to-speech.
  */
-import { SPEECH_RATE_VALUES, type SpeechRateSetting } from "./speech";
+import type { SpeechRateSetting } from "./speech";
+import type { AnnouncementItem } from "./audioUrls";
 
 export type AudioPlaybackOptions = {
   rate: SpeechRateSetting;
   onStart?: () => void;
   onDone?: () => void;
-  onFallback?: (fromIndex: number) => void;
+  onFallback?: (fromSegmentIndex: number) => void;
 };
 
 /** Playback speeds for recordings (slightly gentler than the TTS range). */
@@ -27,7 +28,7 @@ const PLAYBACK_RATES: Record<SpeechRateSetting, number> = {
   fast: 1.2,
 };
 
-const POOL_SIZE = 3; // hype, name, body
+const POOL_SIZE = 4; // hype, name, cry, body
 
 let pool: HTMLAudioElement[] | null = null;
 let unlocked = false;
@@ -80,10 +81,10 @@ export function unlockAudioPlayback(): void {
 
 /** Plays the playlist in order. Never overlaps (token guard). */
 export function playAnnouncement(
-  urls: string[],
+  items: AnnouncementItem[],
   options: AudioPlaybackOptions
 ): void {
-  if (!audioSupported() || urls.length === 0) {
+  if (!audioSupported() || items.length === 0) {
     options.onFallback?.(0);
     return;
   }
@@ -98,35 +99,47 @@ export function playAnnouncement(
   let index = 0;
 
   // Preload every clip up front so the sequence plays without gaps.
-  urls.forEach((url, i) => {
+  items.forEach((item, i) => {
     const el = elements[i % elements.length];
-    if (el.src !== url) {
-      el.src = url;
+    if (el.src !== item.url) {
+      el.src = item.url;
       el.load();
     }
   });
 
   const playNext = () => {
     if (!isCurrent()) return;
-    if (index >= urls.length) {
+    if (index >= items.length) {
       options.onDone?.();
       return;
     }
     const current = index;
+    const item = items[current];
     const el = elements[current % elements.length];
     el.playbackRate = rate;
     el.currentTime = 0;
     el.muted = false;
+    el.volume = item.volume ?? 1;
 
-    el.onended = () => {
-      if (!isCurrent()) return;
+    const advance = () => {
       index = current + 1;
       playNext();
     };
-    el.onerror = () => {
-      if (!isCurrent()) return;
+    const fail = () => {
+      if (item.optional) {
+        // Decorative clip (e.g. the cry) — just move on.
+        advance();
+        return;
+      }
       clearHandlers();
-      options.onFallback?.(current);
+      options.onFallback?.(item.segmentIndex ?? 0);
+    };
+
+    el.onended = () => {
+      if (isCurrent()) advance();
+    };
+    el.onerror = () => {
+      if (isCurrent()) fail();
     };
 
     const attempt = el.play();
@@ -139,9 +152,7 @@ export function playAnnouncement(
           }
         })
         .catch(() => {
-          if (!isCurrent()) return;
-          clearHandlers();
-          options.onFallback?.(current);
+          if (isCurrent()) fail();
         });
     } else if (!started) {
       started = true;

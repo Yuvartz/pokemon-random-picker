@@ -4,7 +4,7 @@ import {
   playAnnouncement,
   stopAnnouncement,
 } from "../services/audioSpeech";
-import { buildAnnouncementUrls } from "../services/audioUrls";
+import { buildAnnouncementItems } from "../services/audioUrls";
 import { useSettings } from "../context/SettingsContext";
 import { buildSpeechSegments } from "../utils/speechText";
 import { getHypePhrases, pickRandomHypeIndex } from "../data/hypePhrases";
@@ -72,13 +72,13 @@ export function useSpeech() {
         },
       };
 
-      playAnnouncement(buildAnnouncementUrls(pokemon, language, hypeIndex), {
+      playAnnouncement(buildAnnouncementItems(pokemon, language, hypeIndex), {
         rate: settings.speechRate,
         onStart: callbacks.onStart,
         onDone: callbacks.onDone,
-        onFallback: (fromIndex) => {
+        onFallback: (fromSegmentIndex) => {
           // Recording unavailable — continue from the same spot with TTS.
-          speak(segments.slice(fromIndex), {
+          speak(segments.slice(fromSegmentIndex), {
             rate: settings.speechRate,
             ...callbacks,
           });

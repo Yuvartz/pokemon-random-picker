@@ -7,18 +7,19 @@
  * there. This keeps the native app free of extra audio dependencies.
  */
 import type { SpeechRateSetting } from "./speech";
+import type { AnnouncementItem } from "./audioUrls";
 
 export type AudioPlaybackOptions = {
   rate: SpeechRateSetting;
   onStart?: () => void;
   onDone?: () => void;
   /** Called instead of onDone when playback cannot proceed; the argument
-   * is the playlist index to resume from with TTS. */
-  onFallback?: (fromIndex: number) => void;
+   * is the speech-segment index to resume from with TTS. */
+  onFallback?: (fromSegmentIndex: number) => void;
 };
 
 export function playAnnouncement(
-  _urls: string[],
+  _items: AnnouncementItem[],
   options: AudioPlaybackOptions
 ): void {
   options.onFallback?.(0);

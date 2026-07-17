@@ -21,19 +21,45 @@ export function bodyAudioUrl(language: Language, pokemonId: number): string {
   return `${AUDIO_BASE_URL}/${language}/body-${pokemonId}.mp3`;
 }
 
+/** The Pokémon's official in-game cry (converted to MP3 for iOS). */
+export function cryAudioUrl(pokemonId: number): string {
+  return `${AUDIO_BASE_URL}/cry/${pokemonId}.mp3`;
+}
+
+export type AnnouncementItem = {
+  url: string;
+  /**
+   * Index into the buildSpeechSegments array to resume from with TTS if
+   * this clip fails, or null for decorative clips (like the cry) that
+   * are simply skipped on failure.
+   */
+  segmentIndex: number | null;
+  /** Failure skips the clip instead of triggering the TTS fallback. */
+  optional?: boolean;
+  /** Playback volume 0..1 (cries are loud; they get lowered a bit). */
+  volume?: number;
+};
+
 /**
- * The full announcement playlist, parallel to the speech segments built
- * by buildSpeechSegments (hype → name → body), so a playback failure at
- * index N can fall back to TTS from segment N.
+ * The full announcement playlist:
+ * hype opener → name → the Pokémon's own cry → details.
+ * The segmentIndex fields keep it aligned with buildSpeechSegments so a
+ * failure can continue from the same spot with text-to-speech.
  */
-export function buildAnnouncementUrls(
+export function buildAnnouncementItems(
   pokemon: PokemonData,
   language: Language,
   hypeIndex: number
-): string[] {
+): AnnouncementItem[] {
   return [
-    hypeAudioUrl(language, hypeIndex),
-    nameAudioUrl(pokemon.id),
-    bodyAudioUrl(language, pokemon.id),
+    { url: hypeAudioUrl(language, hypeIndex), segmentIndex: 0 },
+    { url: nameAudioUrl(pokemon.id), segmentIndex: 1 },
+    {
+      url: cryAudioUrl(pokemon.id),
+      segmentIndex: null,
+      optional: true,
+      volume: 0.65,
+    },
+    { url: bodyAudioUrl(language, pokemon.id), segmentIndex: 2 },
   ];
 }
