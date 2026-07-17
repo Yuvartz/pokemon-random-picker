@@ -7,6 +7,8 @@ export type Settings = {
   autoSpeech: boolean;
   speechRate: SpeechRateSetting;
   haptics: boolean;
+  /** Master sound switch — quick mute without touching auto-speech. */
+  muted: boolean;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -14,6 +16,7 @@ export const DEFAULT_SETTINGS: Settings = {
   autoSpeech: true,
   speechRate: "normal",
   haptics: true,
+  muted: false,
 };
 
 export type HistoryEntry = {
@@ -53,6 +56,10 @@ export function parseSettings(raw: string | null): Settings {
         typeof parsed.haptics === "boolean"
           ? parsed.haptics
           : DEFAULT_SETTINGS.haptics,
+      muted:
+        typeof parsed.muted === "boolean"
+          ? parsed.muted
+          : DEFAULT_SETTINGS.muted,
     };
   } catch {
     return { ...DEFAULT_SETTINGS };

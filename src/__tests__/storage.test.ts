@@ -17,6 +17,7 @@ describe("settings serialization", () => {
       autoSpeech: false,
       speechRate: "fast",
       haptics: false,
+      muted: true,
     };
     expect(parseSettings(serializeSettings(settings))).toEqual(settings);
   });
@@ -36,9 +37,10 @@ describe("settings serialization", () => {
     expect(parsed.haptics).toBe(DEFAULT_SETTINGS.haptics);
   });
 
-  it("defaults to Hebrew with auto-speech on", () => {
+  it("defaults to Hebrew with auto-speech on and sound unmuted", () => {
     expect(DEFAULT_SETTINGS.language).toBe("he");
     expect(DEFAULT_SETTINGS.autoSpeech).toBe(true);
+    expect(DEFAULT_SETTINGS.muted).toBe(false);
   });
 });
 

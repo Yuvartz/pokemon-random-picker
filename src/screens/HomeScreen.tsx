@@ -23,6 +23,7 @@ import {
 } from "../services/audioSpeech";
 import { getPokemonById } from "../data/pokemon";
 import { getRandomPokemonId } from "../utils/random";
+import { hasEvolutionFamily } from "../utils/evolutions";
 import { getTypeTheme, DEFAULT_THEME } from "../theme/typeColors";
 import {
   COLORS,
@@ -43,7 +44,7 @@ const SPEECH_DELAY_MS = 150;
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 export function HomeScreen({ navigation, route }: Props) {
-  const { settings, strings, isRTL } = useSettings();
+  const { settings, strings, isRTL, updateSettings } = useSettings();
   const { addToHistory } = useHistory();
   const { isSpeaking, speechFailed, speakPokemon, stop } = useSpeech();
 
@@ -124,9 +125,13 @@ export function HomeScreen({ navigation, route }: Props) {
         }).start();
 
         // Recorded announcements play regardless of installed TTS voices,
-        // so only skip auto-speech when neither recordings nor a voice
-        // can produce sound.
-        if (settings.autoSpeech && (speechAvailable || canPlayRecordings())) {
+        // so only skip auto-speech when muted or when neither recordings
+        // nor a voice can produce sound.
+        if (
+          settings.autoSpeech &&
+          !settings.muted &&
+          (speechAvailable || canPlayRecordings())
+        ) {
           schedule(() => speakPokemon(selected), SPEECH_DELAY_MS);
         }
       };
@@ -142,6 +147,7 @@ export function HomeScreen({ navigation, route }: Props) {
       strings.errorGeneric,
       settings.haptics,
       settings.autoSpeech,
+      settings.muted,
       speechAvailable,
       addToHistory,
       cardOpacity,
@@ -160,7 +166,28 @@ export function HomeScreen({ navigation, route }: Props) {
     revealPokemon(getRandomPokemonId(), true);
   }, [revealPokemon]);
 
-  // Opened from the history screen with a specific Pokémon.
+  // Returning to a card (back button, history, evolutions) reads it
+  // aloud right away, exactly like a fresh reveal.
+  const speakIfEnabled = useCallback(
+    (selected: PokemonData) => {
+      if (
+        settings.autoSpeech &&
+        !settings.muted &&
+        (speechAvailable || canPlayRecordings())
+      ) {
+        schedule(() => speakPokemon(selected), SPEECH_DELAY_MS);
+      }
+    },
+    [
+      settings.autoSpeech,
+      settings.muted,
+      speechAvailable,
+      schedule,
+      speakPokemon,
+    ]
+  );
+
+  // Opened from the history or evolutions screen with a specific Pokémon.
   useEffect(() => {
     const requestedId = route.params?.pokemonId;
     if (requestedId != null) {
@@ -171,12 +198,22 @@ export function HomeScreen({ navigation, route }: Props) {
         setError(null);
         showPokemon(selected);
         cardOpacity.setValue(1);
+        speakIfEnabled(selected);
       }
     }
-  }, [route.params?.pokemonId, navigation, stop, cardOpacity, showPokemon]);
+  }, [
+    route.params?.pokemonId,
+    navigation,
+    stop,
+    cardOpacity,
+    showPokemon,
+    speakIfEnabled,
+  ]);
 
   const goBackToPrevious = useCallback(() => {
     if (revealingRef.current || backStack.length === 0) return;
+    unlockSpeech();
+    unlockAudioPlayback();
     const previous = getPokemonById(backStack[backStack.length - 1]);
     setBackStack((stack) => stack.slice(0, -1));
     if (previous) {
@@ -185,8 +222,23 @@ export function HomeScreen({ navigation, route }: Props) {
       pokemonRef.current = previous;
       setPokemon(previous);
       cardOpacity.setValue(1);
+      speakIfEnabled(previous);
     }
-  }, [backStack, stop, cardOpacity]);
+  }, [backStack, stop, cardOpacity, speakIfEnabled]);
+
+  const toggleMute = useCallback(() => {
+    if (!settings.muted) stop();
+    updateSettings({ muted: !settings.muted });
+  }, [settings.muted, stop, updateSettings]);
+
+  const replay = useCallback(() => {
+    if (!pokemon || isRevealing) return;
+    unlockSpeech();
+    unlockAudioPlayback();
+    // Replay always makes sound — pressing it while muted unmutes.
+    if (settings.muted) updateSettings({ muted: false });
+    speakPokemon(pokemon);
+  }, [pokemon, isRevealing, settings.muted, updateSettings, speakPokemon]);
 
   const theme = pokemon ? getTypeTheme(pokemon.types[0]) : DEFAULT_THEME;
 
@@ -225,6 +277,64 @@ export function HomeScreen({ navigation, route }: Props) {
         </View>
       </View>
 
+      {/* All controls live up here so nothing requires scrolling. */}
+      <View style={styles.controlBar}>
+        <PrimaryButton
+          label={`🎲 ${
+            isRevealing
+              ? strings.choosing
+              : pokemon
+                ? strings.chooseAnotherButton
+                : strings.chooseButton
+          }`}
+          onPress={chooseRandom}
+          color={theme.accent}
+          disabled={isRevealing}
+          style={styles.mainButton}
+        />
+        <View style={[styles.iconRow, isRTL && styles.headerRTL]}>
+          <IconButton
+            icon="↩️"
+            label={strings.previousButton}
+            onPress={goBackToPrevious}
+            disabled={isRevealing || backStack.length === 0}
+            accent={theme.accent}
+          />
+          <IconButton
+            icon="🔊"
+            label={strings.replayShort}
+            onPress={replay}
+            disabled={isRevealing || !pokemon}
+            accent={theme.accent}
+          />
+          <IconButton
+            icon="⏹️"
+            label={strings.stopShort}
+            onPress={stop}
+            disabled={!isSpeaking}
+            accent={theme.accent}
+          />
+          <IconButton
+            icon={settings.muted ? "🔇" : "🎵"}
+            label={settings.muted ? strings.unmuteButton : strings.muteButton}
+            onPress={toggleMute}
+            active={settings.muted}
+            accent={theme.accent}
+          />
+          <IconButton
+            icon="🧬"
+            label={strings.evolutionsButton}
+            onPress={() => {
+              if (!pokemon) return;
+              stop();
+              navigation.navigate("Evolutions", { pokemonId: pokemon.id });
+            }}
+            disabled={isRevealing || !pokemon || !hasEvolutionFamily(pokemon)}
+            accent={theme.accent}
+          />
+        </View>
+      </View>
+
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -241,16 +351,7 @@ export function HomeScreen({ navigation, route }: Props) {
           <LoadingReveal />
         ) : pokemon ? (
           <Animated.View style={{ opacity: cardOpacity, width: "100%" }}>
-            <PokemonCard
-              pokemon={pokemon}
-              isSpeaking={isSpeaking}
-              onReplaySpeech={() => speakPokemon(pokemon)}
-              onStopSpeech={stop}
-              onShowEvolutions={() => {
-                stop();
-                navigation.navigate("Evolutions", { pokemonId: pokemon.id });
-              }}
-            />
+            <PokemonCard pokemon={pokemon} />
           </Animated.View>
         ) : (
           <View style={styles.emptyState}>
@@ -268,46 +369,46 @@ export function HomeScreen({ navigation, route }: Props) {
           </View>
         )}
       </ScrollView>
-
-      <View style={styles.footer}>
-        <View style={[styles.footerButtons, isRTL && styles.headerRTL]}>
-          {backStack.length > 0 && (
-            <Pressable
-              onPress={goBackToPrevious}
-              disabled={isRevealing}
-              accessibilityRole="button"
-              accessibilityLabel={strings.previousButton}
-              accessibilityState={{ disabled: isRevealing }}
-              style={({ pressed }) => [
-                styles.backButtonFooter,
-                {
-                  borderColor: theme.accent,
-                },
-                pressed && !isRevealing && styles.backButtonFooterPressed,
-                isRevealing && styles.backButtonFooterDisabled,
-              ]}
-            >
-              <Text style={[styles.backButtonFooterText, { color: theme.accent }]}>
-                ↩️ {strings.previousButton}
-              </Text>
-            </Pressable>
-          )}
-          <PrimaryButton
-            label={
-              isRevealing
-                ? strings.choosing
-                : pokemon
-                  ? strings.chooseAnotherButton
-                  : strings.chooseButton
-            }
-            onPress={chooseRandom}
-            color={theme.accent}
-            disabled={isRevealing}
-            style={styles.mainButton}
-          />
-        </View>
-      </View>
     </SafeAreaView>
+  );
+}
+
+type IconButtonProps = {
+  icon: string;
+  label: string;
+  onPress: () => void;
+  accent: string;
+  disabled?: boolean;
+  active?: boolean;
+};
+
+function IconButton({
+  icon,
+  label,
+  onPress,
+  accent,
+  disabled,
+  active,
+}: IconButtonProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: !!disabled, selected: !!active }}
+      style={({ pressed }) => [
+        styles.iconButton,
+        active && { borderColor: accent, borderWidth: 2 },
+        pressed && !disabled && styles.iconButtonPressed,
+        disabled && styles.iconButtonDisabled,
+      ]}
+    >
+      <Text style={styles.iconButtonIcon}>{icon}</Text>
+      <Text style={styles.iconButtonLabel} numberOfLines={1}>
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -400,47 +501,56 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.l,
     maxWidth: 440,
   },
-  footer: {
-    paddingHorizontal: SPACING.m,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.m,
-    backgroundColor: COLORS.backgroundRaised,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-  },
-  footerButtons: {
-    flexDirection: "row",
-    alignItems: "stretch",
+  controlBar: {
     width: "100%",
     maxWidth: 680,
     alignSelf: "center",
+    paddingHorizontal: SPACING.m,
+    paddingTop: SPACING.sm,
+    paddingBottom: SPACING.s,
     gap: SPACING.s,
   },
   mainButton: {
-    flex: 1,
+    width: "100%",
   },
-  backButtonFooter: {
-    minHeight: 56,
-    minWidth: MIN_TOUCH,
-    borderRadius: RADIUS.button,
-    borderWidth: 1.5,
+  iconRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: SPACING.xs,
+  },
+  iconButton: {
+    flex: 1,
+    minHeight: MIN_TOUCH + 10,
+    borderRadius: RADIUS.s,
+    borderWidth: 1,
+    borderColor: COLORS.border,
     backgroundColor: COLORS.card,
-    paddingHorizontal: SPACING.m,
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: SPACING.xs,
+    paddingHorizontal: 2,
+    ...SHADOWS.subtle,
   },
-  backButtonFooterPressed: {
+  iconButtonPressed: {
     backgroundColor: COLORS.surfaceMuted,
-    opacity: 0.82,
-    transform: [{ translateY: 1 }, { scale: 0.99 }],
+    transform: [{ scale: 0.96 }],
+    shadowOpacity: 0,
+    elevation: 0,
   },
-  backButtonFooterDisabled: {
-    opacity: 0.48,
+  iconButtonDisabled: {
+    opacity: 0.35,
+    shadowOpacity: 0,
+    elevation: 0,
   },
-  backButtonFooterText: {
-    ...TYPOGRAPHY.label,
-    fontSize: 14,
-    lineHeight: 20,
-    fontWeight: "800",
+  iconButtonIcon: {
+    fontSize: 22,
+    lineHeight: 28,
+  },
+  iconButtonLabel: {
+    ...TYPOGRAPHY.caption,
+    fontSize: 10,
+    lineHeight: 13,
+    color: COLORS.textSecondary,
+    textAlign: "center",
   },
 });
