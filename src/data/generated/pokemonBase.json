@@ -16,7 +16,11 @@
       "specialAttack": 65,
       "specialDefense": 65,
       "speed": 45
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      2
+    ]
   },
   {
     "id": 2,
@@ -35,7 +39,11 @@
       "specialAttack": 80,
       "specialDefense": 80,
       "speed": 60
-    }
+    },
+    "evolvesFromId": 1,
+    "evolvesToIds": [
+      3
+    ]
   },
   {
     "id": 3,
@@ -54,7 +62,9 @@
       "specialAttack": 100,
       "specialDefense": 100,
       "speed": 80
-    }
+    },
+    "evolvesFromId": 2,
+    "evolvesToIds": []
   },
   {
     "id": 4,
@@ -72,7 +82,11 @@
       "specialAttack": 60,
       "specialDefense": 50,
       "speed": 65
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      5
+    ]
   },
   {
     "id": 5,
@@ -90,7 +104,11 @@
       "specialAttack": 80,
       "specialDefense": 65,
       "speed": 80
-    }
+    },
+    "evolvesFromId": 4,
+    "evolvesToIds": [
+      6
+    ]
   },
   {
     "id": 6,
@@ -109,7 +127,9 @@
       "specialAttack": 109,
       "specialDefense": 85,
       "speed": 100
-    }
+    },
+    "evolvesFromId": 5,
+    "evolvesToIds": []
   },
   {
     "id": 7,
@@ -127,7 +147,11 @@
       "specialAttack": 50,
       "specialDefense": 64,
       "speed": 43
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      8
+    ]
   },
   {
     "id": 8,
@@ -145,7 +169,11 @@
       "specialAttack": 65,
       "specialDefense": 80,
       "speed": 58
-    }
+    },
+    "evolvesFromId": 7,
+    "evolvesToIds": [
+      9
+    ]
   },
   {
     "id": 9,
@@ -163,7 +191,9 @@
       "specialAttack": 85,
       "specialDefense": 105,
       "speed": 78
-    }
+    },
+    "evolvesFromId": 8,
+    "evolvesToIds": []
   },
   {
     "id": 10,
@@ -181,7 +211,11 @@
       "specialAttack": 20,
       "specialDefense": 20,
       "speed": 45
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      11
+    ]
   },
   {
     "id": 11,
@@ -199,7 +233,11 @@
       "specialAttack": 25,
       "specialDefense": 25,
       "speed": 30
-    }
+    },
+    "evolvesFromId": 10,
+    "evolvesToIds": [
+      12
+    ]
   },
   {
     "id": 12,
@@ -218,7 +256,9 @@
       "specialAttack": 90,
       "specialDefense": 80,
       "speed": 70
-    }
+    },
+    "evolvesFromId": 11,
+    "evolvesToIds": []
   },
   {
     "id": 13,
@@ -237,7 +277,11 @@
       "specialAttack": 20,
       "specialDefense": 20,
       "speed": 50
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      14
+    ]
   },
   {
     "id": 14,
@@ -256,7 +300,11 @@
       "specialAttack": 25,
       "specialDefense": 25,
       "speed": 35
-    }
+    },
+    "evolvesFromId": 13,
+    "evolvesToIds": [
+      15
+    ]
   },
   {
     "id": 15,
@@ -275,7 +323,9 @@
       "specialAttack": 45,
       "specialDefense": 80,
       "speed": 75
-    }
+    },
+    "evolvesFromId": 14,
+    "evolvesToIds": []
   },
   {
     "id": 16,
@@ -294,7 +344,11 @@
       "specialAttack": 35,
       "specialDefense": 35,
       "speed": 56
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      17
+    ]
   },
   {
     "id": 17,
@@ -313,7 +367,11 @@
       "specialAttack": 50,
       "specialDefense": 50,
       "speed": 71
-    }
+    },
+    "evolvesFromId": 16,
+    "evolvesToIds": [
+      18
+    ]
   },
   {
     "id": 18,
@@ -332,7 +390,9 @@
       "specialAttack": 70,
       "specialDefense": 70,
       "speed": 101
-    }
+    },
+    "evolvesFromId": 17,
+    "evolvesToIds": []
   },
   {
     "id": 19,
@@ -350,7 +410,11 @@
       "specialAttack": 25,
       "specialDefense": 35,
       "speed": 72
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      20
+    ]
   },
   {
     "id": 20,
@@ -368,7 +432,9 @@
       "specialAttack": 50,
       "specialDefense": 70,
       "speed": 97
-    }
+    },
+    "evolvesFromId": 19,
+    "evolvesToIds": []
   },
   {
     "id": 21,
@@ -387,7 +453,11 @@
       "specialAttack": 31,
       "specialDefense": 31,
       "speed": 70
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      22
+    ]
   },
   {
     "id": 22,
@@ -406,7 +476,9 @@
       "specialAttack": 61,
       "specialDefense": 61,
       "speed": 100
-    }
+    },
+    "evolvesFromId": 21,
+    "evolvesToIds": []
   },
   {
     "id": 23,
@@ -424,7 +496,11 @@
       "specialAttack": 40,
       "specialDefense": 54,
       "speed": 55
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      24
+    ]
   },
   {
     "id": 24,
@@ -442,7 +518,9 @@
       "specialAttack": 65,
       "specialDefense": 79,
       "speed": 80
-    }
+    },
+    "evolvesFromId": 23,
+    "evolvesToIds": []
   },
   {
     "id": 25,
@@ -460,7 +538,11 @@
       "specialAttack": 50,
       "specialDefense": 50,
       "speed": 90
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      26
+    ]
   },
   {
     "id": 26,
@@ -478,7 +560,9 @@
       "specialAttack": 90,
       "specialDefense": 80,
       "speed": 110
-    }
+    },
+    "evolvesFromId": 25,
+    "evolvesToIds": []
   },
   {
     "id": 27,
@@ -496,7 +580,11 @@
       "specialAttack": 20,
       "specialDefense": 30,
       "speed": 40
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      28
+    ]
   },
   {
     "id": 28,
@@ -514,7 +602,9 @@
       "specialAttack": 45,
       "specialDefense": 55,
       "speed": 65
-    }
+    },
+    "evolvesFromId": 27,
+    "evolvesToIds": []
   },
   {
     "id": 29,
@@ -532,7 +622,11 @@
       "specialAttack": 40,
       "specialDefense": 40,
       "speed": 41
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      30
+    ]
   },
   {
     "id": 30,
@@ -550,7 +644,11 @@
       "specialAttack": 55,
       "specialDefense": 55,
       "speed": 56
-    }
+    },
+    "evolvesFromId": 29,
+    "evolvesToIds": [
+      31
+    ]
   },
   {
     "id": 31,
@@ -569,7 +667,9 @@
       "specialAttack": 75,
       "specialDefense": 85,
       "speed": 76
-    }
+    },
+    "evolvesFromId": 30,
+    "evolvesToIds": []
   },
   {
     "id": 32,
@@ -587,7 +687,11 @@
       "specialAttack": 40,
       "specialDefense": 40,
       "speed": 50
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      33
+    ]
   },
   {
     "id": 33,
@@ -605,7 +709,11 @@
       "specialAttack": 55,
       "specialDefense": 55,
       "speed": 65
-    }
+    },
+    "evolvesFromId": 32,
+    "evolvesToIds": [
+      34
+    ]
   },
   {
     "id": 34,
@@ -624,7 +732,9 @@
       "specialAttack": 85,
       "specialDefense": 75,
       "speed": 85
-    }
+    },
+    "evolvesFromId": 33,
+    "evolvesToIds": []
   },
   {
     "id": 35,
@@ -642,7 +752,11 @@
       "specialAttack": 60,
       "specialDefense": 65,
       "speed": 35
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      36
+    ]
   },
   {
     "id": 36,
@@ -660,7 +774,9 @@
       "specialAttack": 95,
       "specialDefense": 90,
       "speed": 60
-    }
+    },
+    "evolvesFromId": 35,
+    "evolvesToIds": []
   },
   {
     "id": 37,
@@ -678,7 +794,11 @@
       "specialAttack": 50,
       "specialDefense": 65,
       "speed": 65
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      38
+    ]
   },
   {
     "id": 38,
@@ -696,7 +816,9 @@
       "specialAttack": 81,
       "specialDefense": 100,
       "speed": 100
-    }
+    },
+    "evolvesFromId": 37,
+    "evolvesToIds": []
   },
   {
     "id": 39,
@@ -715,7 +837,11 @@
       "specialAttack": 45,
       "specialDefense": 25,
       "speed": 20
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      40
+    ]
   },
   {
     "id": 40,
@@ -734,7 +860,9 @@
       "specialAttack": 85,
       "specialDefense": 50,
       "speed": 45
-    }
+    },
+    "evolvesFromId": 39,
+    "evolvesToIds": []
   },
   {
     "id": 41,
@@ -753,7 +881,11 @@
       "specialAttack": 30,
       "specialDefense": 40,
       "speed": 55
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      42
+    ]
   },
   {
     "id": 42,
@@ -772,7 +904,9 @@
       "specialAttack": 65,
       "specialDefense": 75,
       "speed": 90
-    }
+    },
+    "evolvesFromId": 41,
+    "evolvesToIds": []
   },
   {
     "id": 43,
@@ -791,7 +925,11 @@
       "specialAttack": 75,
       "specialDefense": 65,
       "speed": 30
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      44
+    ]
   },
   {
     "id": 44,
@@ -810,7 +948,11 @@
       "specialAttack": 85,
       "specialDefense": 75,
       "speed": 40
-    }
+    },
+    "evolvesFromId": 43,
+    "evolvesToIds": [
+      45
+    ]
   },
   {
     "id": 45,
@@ -829,7 +971,9 @@
       "specialAttack": 110,
       "specialDefense": 90,
       "speed": 50
-    }
+    },
+    "evolvesFromId": 44,
+    "evolvesToIds": []
   },
   {
     "id": 46,
@@ -848,7 +992,11 @@
       "specialAttack": 45,
       "specialDefense": 55,
       "speed": 25
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      47
+    ]
   },
   {
     "id": 47,
@@ -867,7 +1015,9 @@
       "specialAttack": 60,
       "specialDefense": 80,
       "speed": 30
-    }
+    },
+    "evolvesFromId": 46,
+    "evolvesToIds": []
   },
   {
     "id": 48,
@@ -886,7 +1036,11 @@
       "specialAttack": 40,
       "specialDefense": 55,
       "speed": 45
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      49
+    ]
   },
   {
     "id": 49,
@@ -905,7 +1059,9 @@
       "specialAttack": 90,
       "specialDefense": 75,
       "speed": 90
-    }
+    },
+    "evolvesFromId": 48,
+    "evolvesToIds": []
   },
   {
     "id": 50,
@@ -923,7 +1079,11 @@
       "specialAttack": 35,
       "specialDefense": 45,
       "speed": 95
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      51
+    ]
   },
   {
     "id": 51,
@@ -941,7 +1101,9 @@
       "specialAttack": 50,
       "specialDefense": 70,
       "speed": 120
-    }
+    },
+    "evolvesFromId": 50,
+    "evolvesToIds": []
   },
   {
     "id": 52,
@@ -959,7 +1121,11 @@
       "specialAttack": 40,
       "specialDefense": 40,
       "speed": 90
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      53
+    ]
   },
   {
     "id": 53,
@@ -977,7 +1143,9 @@
       "specialAttack": 65,
       "specialDefense": 65,
       "speed": 115
-    }
+    },
+    "evolvesFromId": 52,
+    "evolvesToIds": []
   },
   {
     "id": 54,
@@ -995,7 +1163,11 @@
       "specialAttack": 65,
       "specialDefense": 50,
       "speed": 55
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      55
+    ]
   },
   {
     "id": 55,
@@ -1013,7 +1185,9 @@
       "specialAttack": 95,
       "specialDefense": 80,
       "speed": 85
-    }
+    },
+    "evolvesFromId": 54,
+    "evolvesToIds": []
   },
   {
     "id": 56,
@@ -1031,7 +1205,11 @@
       "specialAttack": 35,
       "specialDefense": 45,
       "speed": 70
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      57
+    ]
   },
   {
     "id": 57,
@@ -1049,7 +1227,9 @@
       "specialAttack": 60,
       "specialDefense": 70,
       "speed": 95
-    }
+    },
+    "evolvesFromId": 56,
+    "evolvesToIds": []
   },
   {
     "id": 58,
@@ -1067,7 +1247,11 @@
       "specialAttack": 70,
       "specialDefense": 50,
       "speed": 60
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      59
+    ]
   },
   {
     "id": 59,
@@ -1085,7 +1269,9 @@
       "specialAttack": 100,
       "specialDefense": 80,
       "speed": 95
-    }
+    },
+    "evolvesFromId": 58,
+    "evolvesToIds": []
   },
   {
     "id": 60,
@@ -1103,7 +1289,11 @@
       "specialAttack": 40,
       "specialDefense": 40,
       "speed": 90
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      61
+    ]
   },
   {
     "id": 61,
@@ -1121,7 +1311,11 @@
       "specialAttack": 50,
       "specialDefense": 50,
       "speed": 90
-    }
+    },
+    "evolvesFromId": 60,
+    "evolvesToIds": [
+      62
+    ]
   },
   {
     "id": 62,
@@ -1140,7 +1334,9 @@
       "specialAttack": 70,
       "specialDefense": 90,
       "speed": 70
-    }
+    },
+    "evolvesFromId": 61,
+    "evolvesToIds": []
   },
   {
     "id": 63,
@@ -1158,7 +1354,11 @@
       "specialAttack": 105,
       "specialDefense": 55,
       "speed": 90
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      64
+    ]
   },
   {
     "id": 64,
@@ -1176,7 +1376,11 @@
       "specialAttack": 120,
       "specialDefense": 70,
       "speed": 105
-    }
+    },
+    "evolvesFromId": 63,
+    "evolvesToIds": [
+      65
+    ]
   },
   {
     "id": 65,
@@ -1194,7 +1398,9 @@
       "specialAttack": 135,
       "specialDefense": 95,
       "speed": 120
-    }
+    },
+    "evolvesFromId": 64,
+    "evolvesToIds": []
   },
   {
     "id": 66,
@@ -1212,7 +1418,11 @@
       "specialAttack": 35,
       "specialDefense": 35,
       "speed": 35
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      67
+    ]
   },
   {
     "id": 67,
@@ -1230,7 +1440,11 @@
       "specialAttack": 50,
       "specialDefense": 60,
       "speed": 45
-    }
+    },
+    "evolvesFromId": 66,
+    "evolvesToIds": [
+      68
+    ]
   },
   {
     "id": 68,
@@ -1248,7 +1462,9 @@
       "specialAttack": 65,
       "specialDefense": 85,
       "speed": 55
-    }
+    },
+    "evolvesFromId": 67,
+    "evolvesToIds": []
   },
   {
     "id": 69,
@@ -1267,7 +1483,11 @@
       "specialAttack": 70,
       "specialDefense": 30,
       "speed": 40
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      70
+    ]
   },
   {
     "id": 70,
@@ -1286,7 +1506,11 @@
       "specialAttack": 85,
       "specialDefense": 45,
       "speed": 55
-    }
+    },
+    "evolvesFromId": 69,
+    "evolvesToIds": [
+      71
+    ]
   },
   {
     "id": 71,
@@ -1305,7 +1529,9 @@
       "specialAttack": 100,
       "specialDefense": 70,
       "speed": 70
-    }
+    },
+    "evolvesFromId": 70,
+    "evolvesToIds": []
   },
   {
     "id": 72,
@@ -1324,7 +1550,11 @@
       "specialAttack": 50,
       "specialDefense": 100,
       "speed": 70
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      73
+    ]
   },
   {
     "id": 73,
@@ -1343,7 +1573,9 @@
       "specialAttack": 80,
       "specialDefense": 120,
       "speed": 100
-    }
+    },
+    "evolvesFromId": 72,
+    "evolvesToIds": []
   },
   {
     "id": 74,
@@ -1362,7 +1594,11 @@
       "specialAttack": 30,
       "specialDefense": 30,
       "speed": 20
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      75
+    ]
   },
   {
     "id": 75,
@@ -1381,7 +1617,11 @@
       "specialAttack": 45,
       "specialDefense": 45,
       "speed": 35
-    }
+    },
+    "evolvesFromId": 74,
+    "evolvesToIds": [
+      76
+    ]
   },
   {
     "id": 76,
@@ -1400,7 +1640,9 @@
       "specialAttack": 55,
       "specialDefense": 65,
       "speed": 45
-    }
+    },
+    "evolvesFromId": 75,
+    "evolvesToIds": []
   },
   {
     "id": 77,
@@ -1418,7 +1660,11 @@
       "specialAttack": 65,
       "specialDefense": 65,
       "speed": 90
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      78
+    ]
   },
   {
     "id": 78,
@@ -1436,7 +1682,9 @@
       "specialAttack": 80,
       "specialDefense": 80,
       "speed": 105
-    }
+    },
+    "evolvesFromId": 77,
+    "evolvesToIds": []
   },
   {
     "id": 79,
@@ -1455,7 +1703,11 @@
       "specialAttack": 40,
       "specialDefense": 40,
       "speed": 15
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      80
+    ]
   },
   {
     "id": 80,
@@ -1474,7 +1726,9 @@
       "specialAttack": 100,
       "specialDefense": 80,
       "speed": 30
-    }
+    },
+    "evolvesFromId": 79,
+    "evolvesToIds": []
   },
   {
     "id": 81,
@@ -1493,7 +1747,11 @@
       "specialAttack": 95,
       "specialDefense": 55,
       "speed": 45
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      82
+    ]
   },
   {
     "id": 82,
@@ -1512,7 +1770,9 @@
       "specialAttack": 120,
       "specialDefense": 70,
       "speed": 70
-    }
+    },
+    "evolvesFromId": 81,
+    "evolvesToIds": []
   },
   {
     "id": 83,
@@ -1531,7 +1791,9 @@
       "specialAttack": 58,
       "specialDefense": 62,
       "speed": 60
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 84,
@@ -1550,7 +1812,11 @@
       "specialAttack": 35,
       "specialDefense": 35,
       "speed": 75
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      85
+    ]
   },
   {
     "id": 85,
@@ -1569,7 +1835,9 @@
       "specialAttack": 60,
       "specialDefense": 60,
       "speed": 110
-    }
+    },
+    "evolvesFromId": 84,
+    "evolvesToIds": []
   },
   {
     "id": 86,
@@ -1587,7 +1855,11 @@
       "specialAttack": 45,
       "specialDefense": 70,
       "speed": 45
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      87
+    ]
   },
   {
     "id": 87,
@@ -1606,7 +1878,9 @@
       "specialAttack": 70,
       "specialDefense": 95,
       "speed": 70
-    }
+    },
+    "evolvesFromId": 86,
+    "evolvesToIds": []
   },
   {
     "id": 88,
@@ -1624,7 +1898,11 @@
       "specialAttack": 40,
       "specialDefense": 50,
       "speed": 25
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      89
+    ]
   },
   {
     "id": 89,
@@ -1642,7 +1920,9 @@
       "specialAttack": 65,
       "specialDefense": 100,
       "speed": 50
-    }
+    },
+    "evolvesFromId": 88,
+    "evolvesToIds": []
   },
   {
     "id": 90,
@@ -1660,7 +1940,11 @@
       "specialAttack": 45,
       "specialDefense": 25,
       "speed": 40
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      91
+    ]
   },
   {
     "id": 91,
@@ -1679,7 +1963,9 @@
       "specialAttack": 85,
       "specialDefense": 45,
       "speed": 70
-    }
+    },
+    "evolvesFromId": 90,
+    "evolvesToIds": []
   },
   {
     "id": 92,
@@ -1698,7 +1984,11 @@
       "specialAttack": 100,
       "specialDefense": 35,
       "speed": 80
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      93
+    ]
   },
   {
     "id": 93,
@@ -1717,7 +2007,11 @@
       "specialAttack": 115,
       "specialDefense": 55,
       "speed": 95
-    }
+    },
+    "evolvesFromId": 92,
+    "evolvesToIds": [
+      94
+    ]
   },
   {
     "id": 94,
@@ -1736,7 +2030,9 @@
       "specialAttack": 130,
       "specialDefense": 75,
       "speed": 110
-    }
+    },
+    "evolvesFromId": 93,
+    "evolvesToIds": []
   },
   {
     "id": 95,
@@ -1755,7 +2051,9 @@
       "specialAttack": 30,
       "specialDefense": 45,
       "speed": 70
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 96,
@@ -1773,7 +2071,11 @@
       "specialAttack": 43,
       "specialDefense": 90,
       "speed": 42
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      97
+    ]
   },
   {
     "id": 97,
@@ -1791,7 +2093,9 @@
       "specialAttack": 73,
       "specialDefense": 115,
       "speed": 67
-    }
+    },
+    "evolvesFromId": 96,
+    "evolvesToIds": []
   },
   {
     "id": 98,
@@ -1809,7 +2113,11 @@
       "specialAttack": 25,
       "specialDefense": 25,
       "speed": 50
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      99
+    ]
   },
   {
     "id": 99,
@@ -1827,7 +2135,9 @@
       "specialAttack": 50,
       "specialDefense": 50,
       "speed": 75
-    }
+    },
+    "evolvesFromId": 98,
+    "evolvesToIds": []
   },
   {
     "id": 100,
@@ -1845,7 +2155,11 @@
       "specialAttack": 55,
       "specialDefense": 55,
       "speed": 100
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      101
+    ]
   },
   {
     "id": 101,
@@ -1863,7 +2177,9 @@
       "specialAttack": 80,
       "specialDefense": 80,
       "speed": 150
-    }
+    },
+    "evolvesFromId": 100,
+    "evolvesToIds": []
   },
   {
     "id": 102,
@@ -1882,7 +2198,11 @@
       "specialAttack": 60,
       "specialDefense": 45,
       "speed": 40
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      103
+    ]
   },
   {
     "id": 103,
@@ -1901,7 +2221,9 @@
       "specialAttack": 125,
       "specialDefense": 75,
       "speed": 55
-    }
+    },
+    "evolvesFromId": 102,
+    "evolvesToIds": []
   },
   {
     "id": 104,
@@ -1919,7 +2241,11 @@
       "specialAttack": 40,
       "specialDefense": 50,
       "speed": 35
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      105
+    ]
   },
   {
     "id": 105,
@@ -1937,7 +2263,9 @@
       "specialAttack": 50,
       "specialDefense": 80,
       "speed": 45
-    }
+    },
+    "evolvesFromId": 104,
+    "evolvesToIds": []
   },
   {
     "id": 106,
@@ -1955,7 +2283,9 @@
       "specialAttack": 35,
       "specialDefense": 110,
       "speed": 87
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 107,
@@ -1973,7 +2303,9 @@
       "specialAttack": 35,
       "specialDefense": 110,
       "speed": 76
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 108,
@@ -1991,7 +2323,9 @@
       "specialAttack": 60,
       "specialDefense": 75,
       "speed": 30
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 109,
@@ -2009,7 +2343,11 @@
       "specialAttack": 60,
       "specialDefense": 45,
       "speed": 35
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      110
+    ]
   },
   {
     "id": 110,
@@ -2027,7 +2365,9 @@
       "specialAttack": 85,
       "specialDefense": 70,
       "speed": 60
-    }
+    },
+    "evolvesFromId": 109,
+    "evolvesToIds": []
   },
   {
     "id": 111,
@@ -2046,7 +2386,11 @@
       "specialAttack": 30,
       "specialDefense": 30,
       "speed": 25
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      112
+    ]
   },
   {
     "id": 112,
@@ -2065,7 +2409,9 @@
       "specialAttack": 45,
       "specialDefense": 45,
       "speed": 40
-    }
+    },
+    "evolvesFromId": 111,
+    "evolvesToIds": []
   },
   {
     "id": 113,
@@ -2083,7 +2429,9 @@
       "specialAttack": 35,
       "specialDefense": 105,
       "speed": 50
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 114,
@@ -2101,7 +2449,9 @@
       "specialAttack": 100,
       "specialDefense": 40,
       "speed": 60
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 115,
@@ -2119,7 +2469,9 @@
       "specialAttack": 40,
       "specialDefense": 80,
       "speed": 90
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 116,
@@ -2137,7 +2489,11 @@
       "specialAttack": 70,
       "specialDefense": 25,
       "speed": 60
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      117
+    ]
   },
   {
     "id": 117,
@@ -2155,7 +2511,9 @@
       "specialAttack": 95,
       "specialDefense": 45,
       "speed": 85
-    }
+    },
+    "evolvesFromId": 116,
+    "evolvesToIds": []
   },
   {
     "id": 118,
@@ -2173,7 +2531,11 @@
       "specialAttack": 35,
       "specialDefense": 50,
       "speed": 63
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      119
+    ]
   },
   {
     "id": 119,
@@ -2191,7 +2553,9 @@
       "specialAttack": 65,
       "specialDefense": 80,
       "speed": 68
-    }
+    },
+    "evolvesFromId": 118,
+    "evolvesToIds": []
   },
   {
     "id": 120,
@@ -2209,7 +2573,11 @@
       "specialAttack": 70,
       "specialDefense": 55,
       "speed": 85
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      121
+    ]
   },
   {
     "id": 121,
@@ -2228,7 +2596,9 @@
       "specialAttack": 100,
       "specialDefense": 85,
       "speed": 115
-    }
+    },
+    "evolvesFromId": 120,
+    "evolvesToIds": []
   },
   {
     "id": 122,
@@ -2247,7 +2617,9 @@
       "specialAttack": 100,
       "specialDefense": 120,
       "speed": 90
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 123,
@@ -2266,7 +2638,9 @@
       "specialAttack": 55,
       "specialDefense": 80,
       "speed": 105
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 124,
@@ -2285,7 +2659,9 @@
       "specialAttack": 115,
       "specialDefense": 95,
       "speed": 95
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 125,
@@ -2303,7 +2679,9 @@
       "specialAttack": 95,
       "specialDefense": 85,
       "speed": 105
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 126,
@@ -2321,7 +2699,9 @@
       "specialAttack": 100,
       "specialDefense": 85,
       "speed": 93
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 127,
@@ -2339,7 +2719,9 @@
       "specialAttack": 55,
       "specialDefense": 70,
       "speed": 85
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 128,
@@ -2357,7 +2739,9 @@
       "specialAttack": 40,
       "specialDefense": 70,
       "speed": 110
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 129,
@@ -2375,7 +2759,11 @@
       "specialAttack": 15,
       "specialDefense": 20,
       "speed": 80
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      130
+    ]
   },
   {
     "id": 130,
@@ -2394,7 +2782,9 @@
       "specialAttack": 60,
       "specialDefense": 100,
       "speed": 81
-    }
+    },
+    "evolvesFromId": 129,
+    "evolvesToIds": []
   },
   {
     "id": 131,
@@ -2413,7 +2803,9 @@
       "specialAttack": 85,
       "specialDefense": 95,
       "speed": 60
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 132,
@@ -2431,7 +2823,9 @@
       "specialAttack": 48,
       "specialDefense": 48,
       "speed": 48
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 133,
@@ -2449,7 +2843,13 @@
       "specialAttack": 45,
       "specialDefense": 65,
       "speed": 55
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      134,
+      135,
+      136
+    ]
   },
   {
     "id": 134,
@@ -2467,7 +2867,9 @@
       "specialAttack": 110,
       "specialDefense": 95,
       "speed": 65
-    }
+    },
+    "evolvesFromId": 133,
+    "evolvesToIds": []
   },
   {
     "id": 135,
@@ -2485,7 +2887,9 @@
       "specialAttack": 110,
       "specialDefense": 95,
       "speed": 130
-    }
+    },
+    "evolvesFromId": 133,
+    "evolvesToIds": []
   },
   {
     "id": 136,
@@ -2503,7 +2907,9 @@
       "specialAttack": 95,
       "specialDefense": 110,
       "speed": 65
-    }
+    },
+    "evolvesFromId": 133,
+    "evolvesToIds": []
   },
   {
     "id": 137,
@@ -2521,7 +2927,9 @@
       "specialAttack": 85,
       "specialDefense": 75,
       "speed": 40
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 138,
@@ -2540,7 +2948,11 @@
       "specialAttack": 90,
       "specialDefense": 55,
       "speed": 35
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      139
+    ]
   },
   {
     "id": 139,
@@ -2559,7 +2971,9 @@
       "specialAttack": 115,
       "specialDefense": 70,
       "speed": 55
-    }
+    },
+    "evolvesFromId": 138,
+    "evolvesToIds": []
   },
   {
     "id": 140,
@@ -2578,7 +2992,11 @@
       "specialAttack": 55,
       "specialDefense": 45,
       "speed": 55
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      141
+    ]
   },
   {
     "id": 141,
@@ -2597,7 +3015,9 @@
       "specialAttack": 65,
       "specialDefense": 70,
       "speed": 80
-    }
+    },
+    "evolvesFromId": 140,
+    "evolvesToIds": []
   },
   {
     "id": 142,
@@ -2616,7 +3036,9 @@
       "specialAttack": 60,
       "specialDefense": 75,
       "speed": 130
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 143,
@@ -2634,7 +3056,9 @@
       "specialAttack": 65,
       "specialDefense": 110,
       "speed": 30
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 144,
@@ -2653,7 +3077,9 @@
       "specialAttack": 95,
       "specialDefense": 125,
       "speed": 85
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 145,
@@ -2672,7 +3098,9 @@
       "specialAttack": 125,
       "specialDefense": 90,
       "speed": 100
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 146,
@@ -2691,7 +3119,9 @@
       "specialAttack": 125,
       "specialDefense": 85,
       "speed": 90
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 147,
@@ -2709,7 +3139,11 @@
       "specialAttack": 50,
       "specialDefense": 50,
       "speed": 50
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": [
+      148
+    ]
   },
   {
     "id": 148,
@@ -2727,7 +3161,11 @@
       "specialAttack": 70,
       "specialDefense": 70,
       "speed": 70
-    }
+    },
+    "evolvesFromId": 147,
+    "evolvesToIds": [
+      149
+    ]
   },
   {
     "id": 149,
@@ -2746,7 +3184,9 @@
       "specialAttack": 100,
       "specialDefense": 100,
       "speed": 80
-    }
+    },
+    "evolvesFromId": 148,
+    "evolvesToIds": []
   },
   {
     "id": 150,
@@ -2764,7 +3204,9 @@
       "specialAttack": 154,
       "specialDefense": 90,
       "speed": 130
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   },
   {
     "id": 151,
@@ -2782,6 +3224,8 @@
       "specialAttack": 100,
       "specialDefense": 100,
       "speed": 100
-    }
+    },
+    "evolvesFromId": null,
+    "evolvesToIds": []
   }
 ]

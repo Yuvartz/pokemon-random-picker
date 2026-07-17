@@ -8,6 +8,7 @@ import { HistoryProvider } from "./src/context/HistoryContext";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { HistoryScreen } from "./src/screens/HistoryScreen";
 import { SettingsScreen } from "./src/screens/SettingsScreen";
+import { EvolutionsScreen } from "./src/screens/EvolutionsScreen";
 import type { RootStackParamList } from "./src/navigation/types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -23,6 +24,7 @@ export default function App() {
               <Stack.Screen name="Home" component={HomeScreen} />
               <Stack.Screen name="History" component={HistoryScreen} />
               <Stack.Screen name="Settings" component={SettingsScreen} />
+              <Stack.Screen name="Evolutions" component={EvolutionsScreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </HistoryProvider>

@@ -45,6 +45,27 @@ function statValue(stats, name) {
   return entry.base_stat;
 }
 
+function speciesIdFromUrl(url) {
+  const match = url.match(/\/(\d+)\/?$/);
+  return match ? Number(match[1]) : null;
+}
+
+/**
+ * Flattens an evolution chain into { childId -> parentId } pairs,
+ * keeping only Pokémon within the Gen I range (so e.g. Pichu, which is
+ * Gen II, does not become Pikachu's parent).
+ */
+function collectEvolutionEdges(chainNode, parentId, edges) {
+  const id = speciesIdFromUrl(chainNode.species.url);
+  const inRange = id != null && id >= FIRST_ID && id <= LAST_ID;
+  if (inRange && parentId != null) {
+    edges.push({ from: parentId, to: id });
+  }
+  for (const next of chainNode.evolves_to ?? []) {
+    collectEvolutionEdges(next, inRange ? id : null, edges);
+  }
+}
+
 async function main() {
   const results = [];
   for (let id = FIRST_ID; id <= LAST_ID; id++) {
@@ -71,6 +92,38 @@ async function main() {
     });
     process.stdout.write(`\rFetched ${id}/${LAST_ID}`);
   }
+
+  // Evolution chains: species -> chain URL (deduplicated), then parse.
+  console.log("\nFetching evolution chains...");
+  const chainUrls = new Set();
+  const speciesChainUrl = new Map();
+  for (let id = FIRST_ID; id <= LAST_ID; id++) {
+    const species = await fetchJson(
+      `https://pokeapi.co/api/v2/pokemon-species/${id}`
+    );
+    speciesChainUrl.set(id, species.evolution_chain.url);
+    chainUrls.add(species.evolution_chain.url);
+    process.stdout.write(`\rSpecies ${id}/${LAST_ID}`);
+  }
+
+  const edges = [];
+  for (const url of chainUrls) {
+    const chain = await fetchJson(url);
+    collectEvolutionEdges(chain.chain, null, edges);
+  }
+
+  const parentOf = new Map(edges.map((e) => [e.to, e.from]));
+  const childrenOf = new Map();
+  for (const e of edges) {
+    if (!childrenOf.has(e.from)) childrenOf.set(e.from, []);
+    childrenOf.get(e.from).push(e.to);
+  }
+  for (const entry of results) {
+    entry.evolvesFromId = parentOf.get(entry.id) ?? null;
+    entry.evolvesToIds = (childrenOf.get(entry.id) ?? []).sort((a, b) => a - b);
+  }
+  console.log(`\nEvolution edges within Gen I: ${edges.length}`);
+
   mkdirSync(dirname(OUT_FILE), { recursive: true });
   writeFileSync(OUT_FILE, JSON.stringify(results, null, 2) + "\n", "utf8");
   console.log(`\nWrote ${results.length} entries to ${OUT_FILE}`);

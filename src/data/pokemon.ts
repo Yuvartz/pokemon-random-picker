@@ -21,7 +21,26 @@ type BaseEntry = {
   heightM: number;
   weightKg: number;
   stats: PokemonStats;
+  evolvesFromId: number | null;
+  evolvesToIds: number[];
 };
+
+const STAGE_BY_ID = new Map<number, number>();
+
+function computeStage(entry: BaseEntry, all: Map<number, BaseEntry>): number {
+  const cached = STAGE_BY_ID.get(entry.id);
+  if (cached != null) return cached;
+  let stage = 0;
+  let current = entry;
+  while (current.evolvesFromId != null) {
+    const parent = all.get(current.evolvesFromId);
+    if (!parent || stage >= 2) break;
+    current = parent;
+    stage++;
+  }
+  STAGE_BY_ID.set(entry.id, stage);
+  return stage;
+}
 
 const DESCRIPTIONS = { ...DESCRIPTIONS_1, ...DESCRIPTIONS_2 };
 
@@ -61,7 +80,10 @@ const ENGLISH_SPEECH_NAME_OVERRIDES: Record<number, string> = {
   122: "Mister Mime",
 };
 
-function buildPokemon(entry: BaseEntry): PokemonData | null {
+function buildPokemon(
+  entry: BaseEntry,
+  allEntries: Map<number, BaseEntry>
+): PokemonData | null {
   const hebrew = HEBREW_NAMES[entry.id];
   const description = DESCRIPTIONS[entry.id];
   const ability = ABILITIES[entry.ability];
@@ -127,13 +149,19 @@ function buildPokemon(entry: BaseEntry): PokemonData | null {
     heightM: entry.heightM,
     weightKg: entry.weightKg,
     stats: entry.stats,
+    evolvesFromId: entry.evolvesFromId,
+    evolvesToIds: entry.evolvesToIds,
+    evolutionStage: computeStage(entry, allEntries),
   };
 }
 
+const BASE_ENTRIES = baseData as BaseEntry[];
+const BASE_BY_ID = new Map(BASE_ENTRIES.map((e) => [e.id, e]));
+
 /** All 151 Pokémon, fully merged and validated. */
-export const ALL_POKEMON: PokemonData[] = (baseData as BaseEntry[])
-  .map(buildPokemon)
-  .filter((p): p is PokemonData => p !== null);
+export const ALL_POKEMON: PokemonData[] = BASE_ENTRIES.map((e) =>
+  buildPokemon(e, BASE_BY_ID)
+).filter((p): p is PokemonData => p !== null);
 
 const BY_ID = new Map(ALL_POKEMON.map((p) => [p.id, p]));
 

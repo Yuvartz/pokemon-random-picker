@@ -206,6 +206,10 @@ export function HomeScreen({ navigation, route }: Props) {
               isSpeaking={isSpeaking}
               onReplaySpeech={() => speakPokemon(pokemon)}
               onStopSpeech={stop}
+              onShowEvolutions={() => {
+                stop();
+                navigation.navigate("Evolutions", { pokemonId: pokemon.id });
+              }}
             />
           </Animated.View>
         ) : (

@@ -69,6 +69,13 @@ export type PokemonData = {
   weightKg: number;
 
   stats: PokemonStats;
+
+  /** Previous evolution within Gen I (null for base forms). */
+  evolvesFromId: number | null;
+  /** Next evolutions within Gen I (empty for final forms). */
+  evolvesToIds: number[];
+  /** 0 = base form, 1 = first evolution, 2 = second evolution. */
+  evolutionStage: number;
 };
 
 export type Language = "he" | "en";

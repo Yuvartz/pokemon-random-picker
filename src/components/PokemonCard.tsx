@@ -3,10 +3,13 @@ import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { PokemonArtwork } from "./PokemonArtwork";
 import { TypeBadge } from "./TypeBadge";
 import { SpeechControls } from "./SpeechControls";
+import { PrimaryButton } from "./PrimaryButton";
 import { useSettings } from "../context/SettingsContext";
 import { getTypeTheme } from "../theme/typeColors";
-import { COLORS, RADIUS, SPACING } from "../theme/colors";
+import { COLORS, MIN_TOUCH, RADIUS, SPACING } from "../theme/colors";
 import { translateType } from "../localization/typeNames";
+import { getPokemonById } from "../data/pokemon";
+import { hasEvolutionFamily } from "../utils/evolutions";
 import type { PokemonData } from "../types/pokemon";
 
 type Props = {
@@ -14,23 +17,31 @@ type Props = {
   isSpeaking: boolean;
   onReplaySpeech: () => void;
   onStopSpeech: () => void;
+  onShowEvolutions: () => void;
 };
 
 export function formatPokedexNumber(id: number): string {
   return `#${String(id).padStart(3, "0")}`;
 }
 
+/**
+ * The Pokémon presented as a collectible-style trading card: a
+ * type-colored frame, name + HP header, evolution stage chip, framed
+ * artwork window, ability entry, flavor-text description and a stats
+ * footer. Original design — not a copy of any official card layout.
+ */
 export function PokemonCard({
   pokemon,
   isSpeaking,
   onReplaySpeech,
   onStopSpeech,
+  onShowEvolutions,
 }: Props) {
   const { settings, strings, isRTL } = useSettings();
   const { width } = useWindowDimensions();
   const isHebrew = settings.language === "he";
   const theme = getTypeTheme(pokemon.types[0]);
-  const artworkSize = Math.min(width * 0.62, 280);
+  const artworkSize = Math.min(width * 0.55, 250);
 
   const primaryName = isHebrew ? pokemon.hebrewName : pokemon.englishName;
   const secondaryName = isHebrew ? pokemon.englishName : pokemon.hebrewName;
@@ -39,158 +50,262 @@ export function PokemonCard({
     ? pokemon.abilityDescriptionHe
     : pokemon.abilityDescriptionEn;
   const description = isHebrew ? pokemon.descriptionHe : pokemon.descriptionEn;
-  const textAlign = isRTL ? "right" : "left";
-  const writingDirection = isRTL ? "rtl" : "ltr";
+  const textAlign = isRTL ? ("right" as const) : ("left" as const);
+  const writingDirection = isRTL ? ("rtl" as const) : ("ltr" as const);
+
+  const stageLabel =
+    pokemon.evolutionStage === 0
+      ? strings.stageBasic
+      : `${strings.stagePrefix} ${pokemon.evolutionStage}`;
+  const evolvesFrom =
+    pokemon.evolvesFromId != null ? getPokemonById(pokemon.evolvesFromId) : null;
+  const evolvesFromName = evolvesFrom
+    ? isHebrew
+      ? evolvesFrom.hebrewName
+      : evolvesFrom.englishName
+    : null;
 
   return (
-    <View style={styles.card}>
-      <Text style={[styles.pokedexNumber, { color: theme.accent }]}>
-        {formatPokedexNumber(pokemon.id)}
-      </Text>
-
-      <View style={styles.artworkWrap}>
-        <PokemonArtwork pokemon={pokemon} size={artworkSize} />
-      </View>
-
-      <Text style={styles.primaryName} accessibilityRole="header">
-        {primaryName}
-      </Text>
-      <Text style={styles.secondaryName}>{secondaryName}</Text>
-
-      <View style={[styles.badgeRow, isRTL && styles.rowRTL]}>
-        {pokemon.types.map((type) => (
-          <TypeBadge
-            key={type}
-            type={type}
-            label={translateType(type, settings.language)}
-          />
-        ))}
-      </View>
-
-      <View style={styles.infoBlock}>
-        <Text style={[styles.infoLabel, { textAlign, writingDirection }]}>
-          {strings.abilityLabel}
+    <View style={[styles.frame, { backgroundColor: theme.accent }]}>
+      <View style={styles.card}>
+        {/* Header: stage chip, name, HP */}
+        <View style={[styles.headerRow, isRTL && styles.rowRTL]}>
+          <View style={[styles.stageChip, { backgroundColor: theme.background }]}>
+            <Text style={[styles.stageChipText, { color: theme.accent }]}>
+              {stageLabel}
+            </Text>
+          </View>
+          <Text
+            style={styles.hp}
+            accessibilityLabel={`HP ${pokemon.stats.hp}`}
+          >
+            HP {pokemon.stats.hp}
+          </Text>
+        </View>
+        <Text style={styles.primaryName} accessibilityRole="header">
+          {primaryName}
         </Text>
-        <Text
-          style={[styles.infoValue, { textAlign, writingDirection, color: theme.accent }]}
+        <Text style={styles.secondaryName}>{secondaryName}</Text>
+        {evolvesFromName && (
+          <Text style={[styles.evolvesFrom, { color: theme.accent }]}>
+            {strings.evolvesFromLabel} {evolvesFromName}
+          </Text>
+        )}
+
+        {/* Artwork window */}
+        <View
+          style={[
+            styles.artworkWindow,
+            { borderColor: theme.accent, backgroundColor: theme.background },
+          ]}
         >
-          {ability}
-        </Text>
-        <Text style={[styles.infoText, { textAlign, writingDirection }]}>
-          {abilityDescription}
-        </Text>
-      </View>
+          <PokemonArtwork pokemon={pokemon} size={artworkSize} />
+        </View>
 
-      <View style={[styles.measurementsRow, isRTL && styles.rowRTL]}>
-        <View style={styles.measurement}>
-          <Text style={styles.infoLabel}>{strings.heightLabel}</Text>
-          <Text style={styles.measurementValue}>
-            {pokemon.heightM} {strings.metersUnit}
+        <View style={[styles.badgeRow, isRTL && styles.rowRTL]}>
+          {pokemon.types.map((type) => (
+            <TypeBadge
+              key={type}
+              type={type}
+              label={translateType(type, settings.language)}
+            />
+          ))}
+        </View>
+
+        {/* Ability entry, styled like a card move */}
+        <View
+          style={[styles.abilityBlock, { backgroundColor: theme.background }]}
+        >
+          <View style={[styles.abilityHeader, isRTL && styles.rowRTL]}>
+            <Text style={[styles.abilityLabel, { textAlign }]}>
+              {strings.abilityLabel}
+            </Text>
+            <Text style={[styles.abilityName, { color: theme.accent }]}>
+              {ability}
+            </Text>
+          </View>
+          <Text
+            style={[styles.abilityText, { textAlign, writingDirection }]}
+          >
+            {abilityDescription}
           </Text>
         </View>
-        <View style={styles.measurement}>
-          <Text style={styles.infoLabel}>{strings.weightLabel}</Text>
-          <Text style={styles.measurementValue}>
-            {pokemon.weightKg} {strings.kilogramsUnit}
-          </Text>
+
+        {/* Flavor text */}
+        <Text style={[styles.flavorText, { textAlign, writingDirection }]}>
+          {description}
+        </Text>
+
+        {/* Card footer */}
+        <View style={[styles.footerRow, { borderTopColor: theme.background }]}>
+          <View style={styles.footerItem}>
+            <Text style={styles.footerLabel}>{strings.pokedexNumber}</Text>
+            <Text style={[styles.footerValue, { color: theme.accent }]}>
+              {formatPokedexNumber(pokemon.id)}
+            </Text>
+          </View>
+          <View style={styles.footerItem}>
+            <Text style={styles.footerLabel}>{strings.heightLabel}</Text>
+            <Text style={styles.footerValue}>
+              {pokemon.heightM} {strings.metersUnit}
+            </Text>
+          </View>
+          <View style={styles.footerItem}>
+            <Text style={styles.footerLabel}>{strings.weightLabel}</Text>
+            <Text style={styles.footerValue}>
+              {pokemon.weightKg} {strings.kilogramsUnit}
+            </Text>
+          </View>
         </View>
+
+        <SpeechControls
+          accent={theme.accent}
+          isSpeaking={isSpeaking}
+          onReplay={onReplaySpeech}
+          onStop={onStopSpeech}
+        />
+
+        {hasEvolutionFamily(pokemon) && (
+          <PrimaryButton
+            label={`🧬 ${strings.evolutionsButton}`}
+            onPress={onShowEvolutions}
+            color={theme.accent}
+            style={styles.evolutionsButton}
+          />
+        )}
       </View>
-
-      <Text style={[styles.description, { textAlign, writingDirection }]}>
-        {description}
-      </Text>
-
-      <SpeechControls
-        accent={theme.accent}
-        isSpeaking={isSpeaking}
-        onReplay={onReplaySpeech}
-        onStop={onStopSpeech}
-      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  frame: {
+    borderRadius: RADIUS.card + 6,
+    padding: 10,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 5,
+  },
   card: {
     backgroundColor: COLORS.card,
     borderRadius: RADIUS.card,
-    padding: SPACING.l,
-    width: "100%",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 3,
+    padding: SPACING.m,
   },
-  pokedexNumber: {
-    fontSize: 18,
-    fontWeight: "800",
-    textAlign: "center",
-  },
-  artworkWrap: {
+  headerRow: {
+    flexDirection: "row",
     alignItems: "center",
-    marginVertical: SPACING.s,
+    justifyContent: "space-between",
+  },
+  rowRTL: {
+    flexDirection: "row-reverse",
+  },
+  stageChip: {
+    borderRadius: RADIUS.badge,
+    paddingHorizontal: SPACING.m,
+    paddingVertical: 4,
+  },
+  stageChipText: {
+    fontSize: 13,
+    fontWeight: "800",
+  },
+  hp: {
+    fontSize: 20,
+    fontWeight: "900",
+    color: "#C0392B",
   },
   primaryName: {
-    fontSize: 32,
-    fontWeight: "800",
+    fontSize: 30,
+    fontWeight: "900",
     color: COLORS.text,
     textAlign: "center",
+    marginTop: SPACING.xs,
   },
   secondaryName: {
-    fontSize: 18,
+    fontSize: 16,
     color: COLORS.textSecondary,
     textAlign: "center",
-    marginBottom: SPACING.s,
+  },
+  evolvesFrom: {
+    fontSize: 13,
+    fontWeight: "700",
+    textAlign: "center",
+    marginTop: 2,
+  },
+  artworkWindow: {
+    borderWidth: 3,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: SPACING.s,
+    marginTop: SPACING.s,
   },
   badgeRow: {
     flexDirection: "row",
     justifyContent: "center",
     flexWrap: "wrap",
-    marginBottom: SPACING.m,
+    marginTop: SPACING.s,
+    marginBottom: SPACING.s,
   },
-  rowRTL: {
-    flexDirection: "row-reverse",
+  abilityBlock: {
+    borderRadius: 14,
+    padding: SPACING.m,
+    marginBottom: SPACING.s,
   },
-  infoBlock: {
-    marginBottom: SPACING.m,
+  abilityHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 2,
   },
-  infoLabel: {
-    fontSize: 13,
+  abilityLabel: {
+    fontSize: 12,
     fontWeight: "700",
     color: COLORS.textSecondary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  infoValue: {
-    fontSize: 20,
+  abilityName: {
+    fontSize: 18,
     fontWeight: "800",
   },
-  infoText: {
-    fontSize: 15,
+  abilityText: {
+    fontSize: 14,
     color: COLORS.text,
-    lineHeight: 22,
+    lineHeight: 20,
   },
-  measurementsRow: {
+  flavorText: {
+    fontSize: 14,
+    fontStyle: "italic",
+    color: COLORS.textSecondary,
+    lineHeight: 21,
+    marginBottom: SPACING.s,
+  },
+  footerRow: {
     flexDirection: "row",
     justifyContent: "space-around",
+    borderTopWidth: 2,
+    paddingTop: SPACING.s,
     marginBottom: SPACING.m,
-    paddingVertical: SPACING.s,
-    borderRadius: 16,
-    backgroundColor: "#F6F7FA",
   },
-  measurement: {
+  footerItem: {
     alignItems: "center",
+    minWidth: MIN_TOUCH,
   },
-  measurementValue: {
-    fontSize: 18,
+  footerLabel: {
+    fontSize: 11,
     fontWeight: "700",
+    color: COLORS.textSecondary,
+    textTransform: "uppercase",
+  },
+  footerValue: {
+    fontSize: 15,
+    fontWeight: "800",
     color: COLORS.text,
   },
-  description: {
-    fontSize: 16,
-    color: COLORS.text,
-    lineHeight: 24,
-    marginBottom: SPACING.l,
+  evolutionsButton: {
+    marginTop: SPACING.m,
   },
 });
