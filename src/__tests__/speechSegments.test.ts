@@ -39,6 +39,16 @@ describe("buildSpeechSegments", () => {
     expect(segments[0].text).not.toMatch(/[♀♂]/);
   });
 
+  it("Pikachu's speech includes his special dear-friend-and-king line", () => {
+    const pikachu = getPokemonById(25)!;
+    expect(pikachu.speechBodyHe).toContain("פיקאצ'ו הוא חבר יקר והוא מלך!");
+    expect(pikachu.speechBodyEn).toContain(
+      "Pikachu is a dear friend and a true king!"
+    );
+    // The special line is speech-only — the card text stays unchanged.
+    expect(pikachu.descriptionHe).not.toContain("מלך");
+  });
+
   it("every Pokémon has a speech body in both languages", () => {
     for (const p of ALL_POKEMON) {
       expect(p.englishSpeechName.length).toBeGreaterThan(0);

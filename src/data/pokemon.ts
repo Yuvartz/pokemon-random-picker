@@ -1,5 +1,6 @@
 import baseData from "./generated/pokemonBase.json";
 import { HEBREW_NAMES } from "./hebrewNames";
+import { SPECIAL_SPEECH_LINES } from "./specialSpeechLines";
 import { DESCRIPTIONS_1 } from "./descriptions1";
 import { DESCRIPTIONS_2 } from "./descriptions2";
 import { ABILITIES } from "./abilities";
@@ -86,17 +87,19 @@ function buildPokemon(entry: BaseEntry): PokemonData | null {
     ENGLISH_SPEECH_NAME_OVERRIDES[entry.id] ?? englishName;
   const hebrewPronunciation = hebrew.pronunciation ?? hebrew.name;
 
+  // Some Pokémon get an extra spoken line at the end of the announcement.
+  const special = SPECIAL_SPEECH_LINES[entry.id];
   const speechPartsEn = {
     id: entry.id,
     types,
     abilityName: ability.nameEn,
-    description: description.en,
+    description: special ? `${description.en} ${special.en}` : description.en,
   };
   const speechPartsHe = {
     id: entry.id,
     types,
     abilityName: ability.nameHe,
-    description: description.he,
+    description: special ? `${description.he} ${special.he}` : description.he,
   };
 
   return {
