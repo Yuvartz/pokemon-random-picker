@@ -1,5 +1,12 @@
 import React from "react";
-import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { PokemonArtwork } from "./PokemonArtwork";
 import { TypeBadge } from "./TypeBadge";
@@ -15,10 +22,12 @@ import {
 } from "../theme/colors";
 import { translateType } from "../localization/typeNames";
 import { getPokemonById } from "../data/pokemon";
+import { getEvolutionStages } from "../utils/evolutions";
 import type { PokemonData } from "../types/pokemon";
 
 type Props = {
   pokemon: PokemonData;
+  onSelectEvolution: (pokemon: PokemonData) => void;
 };
 
 export function formatPokedexNumber(id: number): string {
@@ -36,12 +45,22 @@ const SILVER_FRAME = ["#F4F6FA", "#CBD3DF", "#E8ECF2"] as const;
  * stats strip. Inspired by classic card layouts but an original design.
  * Display-only — all controls live in the screen's top control bar.
  */
-export function PokemonCard({ pokemon }: Props) {
+export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
   const { settings, strings, isRTL } = useSettings();
   const { width } = useWindowDimensions();
   const isHebrew = settings.language === "he";
   const theme = getTypeTheme(pokemon.types[0]);
   const artworkSize = Math.min(width * 0.55, 250);
+  const evolutionStages = getEvolutionStages(pokemon);
+  const evolutionMemberCount = evolutionStages.reduce(
+    (count, stage) => count + stage.length,
+    0
+  );
+  const showEvolutionStrip = evolutionMemberCount > 1;
+  const evolutionStripHeight =
+    evolutionMemberCount * MIN_TOUCH +
+    (evolutionStages.length - 1) * 14 +
+    SPACING.s;
 
   const primaryName = isHebrew ? pokemon.hebrewName : pokemon.englishName;
   const secondaryName = isHebrew ? pokemon.englishName : pokemon.hebrewName;
@@ -119,9 +138,96 @@ export function PokemonCard({ pokemon }: Props) {
             colors={["#FFFFFF", theme.background]}
             start={{ x: 0.5, y: 0 }}
             end={{ x: 0.5, y: 1 }}
-            style={styles.artworkWindow}
+            style={[
+              styles.artworkWindow,
+              showEvolutionStrip && {
+                minHeight: Math.max(210, evolutionStripHeight),
+              },
+            ]}
           >
             <PokemonArtwork pokemon={pokemon} size={artworkSize} />
+            {showEvolutionStrip && (
+              <View
+                style={styles.evolutionStripAnchor}
+                pointerEvents="box-none"
+              >
+                <View style={styles.evolutionStrip}>
+                  {evolutionStages.map((stage, stageIndex) => (
+                  <React.Fragment key={`stage-${stageIndex}`}>
+                    {stageIndex > 0 && (
+                      <Text
+                        style={styles.evolutionArrow}
+                        accessibilityElementsHidden
+                        importantForAccessibility="no-hide-descendants"
+                      >
+                        ↓
+                      </Text>
+                    )}
+                    <View style={styles.evolutionStage}>
+                      {stage.map((member) => {
+                        const isCurrent = member.id === pokemon.id;
+                        const memberTheme = getTypeTheme(member.types[0]);
+                        const memberName = isHebrew
+                          ? member.hebrewName
+                          : member.englishName;
+                        const accessibilityLabel = `${formatPokedexNumber(
+                          member.id
+                        )} ${memberName}${
+                          isCurrent ? `, ${strings.currentPokemonLabel}` : ""
+                        }`;
+
+                        return (
+                          <Pressable
+                            key={member.id}
+                            onPress={() => onSelectEvolution(member)}
+                            accessibilityRole="button"
+                            accessibilityLabel={accessibilityLabel}
+                            accessibilityState={{ selected: isCurrent }}
+                            hitSlop={2}
+                            style={({ pressed }) => [
+                              styles.evolutionMember,
+                              {
+                                borderColor: isCurrent
+                                  ? memberTheme.accent
+                                  : COLORS.borderStrong,
+                                backgroundColor: isCurrent
+                                  ? "#FFF7CC"
+                                  : "rgba(255, 255, 255, 0.94)",
+                              },
+                              isCurrent && styles.evolutionMemberCurrent,
+                              pressed && styles.evolutionMemberPressed,
+                            ]}
+                          >
+                            <Image
+                              source={{ uri: member.imageUrl }}
+                              style={styles.evolutionThumbnail}
+                              contentFit="contain"
+                              cachePolicy="disk"
+                              accessibilityElementsHidden
+                              importantForAccessibility="no-hide-descendants"
+                            />
+                            {isCurrent && (
+                              <View
+                                style={[
+                                  styles.currentMarker,
+                                  { backgroundColor: memberTheme.accent },
+                                ]}
+                                pointerEvents="none"
+                                accessibilityElementsHidden
+                                importantForAccessibility="no-hide-descendants"
+                              >
+                                <Text style={styles.currentMarkerText}>✓</Text>
+                              </View>
+                            )}
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+                  </React.Fragment>
+                  ))}
+                </View>
+              </View>
+            )}
           </LinearGradient>
         </LinearGradient>
 
@@ -255,6 +361,75 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingVertical: SPACING.s,
     overflow: "hidden",
+  },
+  evolutionStripAnchor: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    zIndex: 2,
+    direction: "ltr",
+    alignItems: "flex-start",
+    padding: 5,
+  },
+  evolutionStrip: {
+    alignItems: "center",
+    borderRadius: RADIUS.badge,
+    borderWidth: 1,
+    borderColor: "rgba(24, 32, 51, 0.16)",
+    backgroundColor: "rgba(255, 255, 255, 0.78)",
+    padding: 3,
+    ...SHADOWS.subtle,
+  },
+  evolutionStage: {
+    alignItems: "center",
+    gap: 2,
+  },
+  evolutionMember: {
+    width: MIN_TOUCH,
+    height: MIN_TOUCH,
+    borderRadius: RADIUS.s,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  evolutionMemberCurrent: {
+    borderWidth: 3,
+    ...SHADOWS.subtle,
+  },
+  evolutionMemberPressed: {
+    opacity: 0.72,
+    transform: [{ scale: 0.94 }],
+  },
+  evolutionThumbnail: {
+    width: 40,
+    height: 40,
+  },
+  evolutionArrow: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
+    lineHeight: 14,
+    fontWeight: "900",
+    textAlign: "center",
+  },
+  currentMarker: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    width: 17,
+    height: 17,
+    borderRadius: RADIUS.pill,
+    borderWidth: 1.5,
+    borderColor: COLORS.card,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  currentMarkerText: {
+    color: COLORS.card,
+    fontSize: 11,
+    lineHeight: 13,
+    fontWeight: "900",
   },
   badgeRow: {
     flexDirection: "row",

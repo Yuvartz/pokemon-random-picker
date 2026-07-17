@@ -24,7 +24,6 @@ import {
 } from "../services/audioSpeech";
 import { getPokemonById } from "../data/pokemon";
 import { getRandomPokemonId } from "../utils/random";
-import { hasEvolutionFamily } from "../utils/evolutions";
 import { getTypeTheme, DEFAULT_THEME } from "../theme/typeColors";
 import {
   COLORS,
@@ -168,7 +167,7 @@ export function HomeScreen({ navigation, route }: Props) {
     revealPokemon(getRandomPokemonId(), true);
   }, [revealPokemon]);
 
-  // Returning to a card (back button, history, evolutions) reads it
+  // Returning to a card (back button or history) reads it
   // aloud right away, exactly like a fresh reveal.
   const speakIfEnabled = useCallback(
     (selected: PokemonData) => {
@@ -189,7 +188,7 @@ export function HomeScreen({ navigation, route }: Props) {
     ]
   );
 
-  // Opened from the history or evolutions screen with a specific Pokémon.
+  // Opened from the history screen with a specific Pokémon.
   useEffect(() => {
     const requestedId = route.params?.pokemonId;
     if (requestedId != null) {
@@ -227,6 +226,19 @@ export function HomeScreen({ navigation, route }: Props) {
       speakIfEnabled(previous);
     }
   }, [backStack, stop, cardOpacity, speakIfEnabled]);
+
+  const showEvolutionMember = useCallback(
+    (selected: PokemonData) => {
+      unlockSpeech();
+      unlockAudioPlayback();
+      stop();
+      setError(null);
+      showPokemon(selected);
+      cardOpacity.setValue(1);
+      speakIfEnabled(selected);
+    },
+    [stop, showPokemon, cardOpacity, speakIfEnabled]
+  );
 
   const toggleMute = useCallback(() => {
     if (!settings.muted) stop();
@@ -322,17 +334,6 @@ export function HomeScreen({ navigation, route }: Props) {
             active={settings.muted}
             accent={theme.accent}
           />
-          <IconButton
-            icon="evolutions"
-            label={strings.evolutionsButton}
-            onPress={() => {
-              if (!pokemon) return;
-              stop();
-              navigation.navigate("Evolutions", { pokemonId: pokemon.id });
-            }}
-            disabled={isRevealing || !pokemon || !hasEvolutionFamily(pokemon)}
-            accent={theme.accent}
-          />
         </View>
       </View>
 
@@ -352,7 +353,10 @@ export function HomeScreen({ navigation, route }: Props) {
           <LoadingReveal />
         ) : pokemon ? (
           <Animated.View style={{ opacity: cardOpacity, width: "100%" }}>
-            <PokemonCard pokemon={pokemon} />
+            <PokemonCard
+              pokemon={pokemon}
+              onSelectEvolution={showEvolutionMember}
+            />
           </Animated.View>
         ) : (
           <View style={styles.emptyState}>

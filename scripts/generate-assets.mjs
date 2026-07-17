@@ -40,8 +40,14 @@ const ASSETS = {
   evolutions: `A twisting green DNA double-helix strand with golden sparkle stars. ${STYLE}`,
   history: `A round teal pocket watch with a curved arrow circling around it. ${STYLE}`,
   gear: `A friendly round blue-gray gear cog with a glossy shine. ${STYLE}`,
-  ball: `A closed glossy red-and-white capsule ball with a central button, seen straight on. ${STYLE}`,
+  ball: `Retro 16-bit pixel art sprite of a closed glossy red-and-white capsule ball with a central white button, crisp clean pixels, slight shine highlight, centered, transparent background, no text`,
   logo: `A red-and-white capsule ball, slightly open with golden light and a question mark glowing inside. ${STYLE}`,
+  buttonplate: `Wide horizontal rounded-rectangle video game UI button in retro 16-bit pixel art style: glossy red top half and creamy white bottom half separated by a dark navy horizontal band, thick golden pixel border, subtle shine pixels in the corner, the button shape fills the entire canvas edge to edge, flat front view, transparent background outside the button, no text, no letters, no icons`,
+};
+
+/** Per-asset overrides: generation size and output width. */
+const ASSET_OPTIONS = {
+  buttonplate: { size: "1536x1024", outWidth: 640 },
 };
 
 const only = (() => {
@@ -59,7 +65,7 @@ async function generate(name, prompt) {
     body: JSON.stringify({
       model: "gpt-image-1",
       prompt,
-      size: "1024x1024",
+      size: ASSET_OPTIONS[name]?.size ?? "1024x1024",
       quality: "medium",
       background: "transparent",
       output_format: "png",
@@ -76,14 +82,15 @@ async function generate(name, prompt) {
   const rawPath = join(RAW_DIR, `${name}.png`);
   writeFileSync(rawPath, Buffer.from(b64, "base64"));
 
-  // Downscale to 256px so the app bundle stays small.
+  // Downscale so the app bundle stays small (keeps aspect ratio).
+  const outWidth = ASSET_OPTIONS[name]?.outWidth ?? 256;
   const outPath = join(OUT_DIR, `${name}.png`);
   execFileSync(FFMPEG, [
     "-y",
     "-i",
     rawPath,
     "-vf",
-    "scale=256:256:flags=lanczos",
+    `scale=${outWidth}:-1:flags=lanczos`,
     outPath,
   ]);
   const kb = Math.round(statSync(outPath).size / 1024);
