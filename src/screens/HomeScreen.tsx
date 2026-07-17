@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -34,6 +35,7 @@ import {
   TYPOGRAPHY,
 } from "../theme/colors";
 import { lightTap } from "../utils/haptics";
+import { ICONS, type IconName } from "../theme/icons";
 import type { PokemonData } from "../types/pokemon";
 import type { RootStackParamList } from "../navigation/types";
 
@@ -261,7 +263,7 @@ export function HomeScreen({ navigation, route }: Props) {
               pressed && styles.headerButtonPressed,
             ]}
           >
-            <Text style={styles.headerButtonIcon}>🕘</Text>
+            <Image source={ICONS.history} style={styles.headerButtonImage} />
           </Pressable>
           <Pressable
             onPress={() => navigation.navigate("Settings")}
@@ -272,7 +274,7 @@ export function HomeScreen({ navigation, route }: Props) {
               pressed && styles.headerButtonPressed,
             ]}
           >
-            <Text style={styles.headerButtonIcon}>⚙️</Text>
+            <Image source={ICONS.gear} style={styles.headerButtonImage} />
           </Pressable>
         </View>
       </View>
@@ -280,13 +282,14 @@ export function HomeScreen({ navigation, route }: Props) {
       {/* All controls live up here so nothing requires scrolling. */}
       <View style={styles.controlBar}>
         <PrimaryButton
-          label={`🎲 ${
+          label={
             isRevealing
               ? strings.choosing
               : pokemon
                 ? strings.chooseAnotherButton
                 : strings.chooseButton
-          }`}
+          }
+          iconSource={ICONS.dice}
           onPress={chooseRandom}
           color={theme.accent}
           disabled={isRevealing}
@@ -294,35 +297,35 @@ export function HomeScreen({ navigation, route }: Props) {
         />
         <View style={[styles.iconRow, isRTL && styles.headerRTL]}>
           <IconButton
-            icon="↩️"
+            icon="back"
             label={strings.previousButton}
             onPress={goBackToPrevious}
             disabled={isRevealing || backStack.length === 0}
             accent={theme.accent}
           />
           <IconButton
-            icon="🔊"
+            icon="speaker"
             label={strings.replayShort}
             onPress={replay}
             disabled={isRevealing || !pokemon}
             accent={theme.accent}
           />
           <IconButton
-            icon="⏹️"
+            icon="stop"
             label={strings.stopShort}
             onPress={stop}
             disabled={!isSpeaking}
             accent={theme.accent}
           />
           <IconButton
-            icon={settings.muted ? "🔇" : "🎵"}
+            icon={settings.muted ? "mute" : "note"}
             label={settings.muted ? strings.unmuteButton : strings.muteButton}
             onPress={toggleMute}
             active={settings.muted}
             accent={theme.accent}
           />
           <IconButton
-            icon="🧬"
+            icon="evolutions"
             label={strings.evolutionsButton}
             onPress={() => {
               if (!pokemon) return;
@@ -356,7 +359,7 @@ export function HomeScreen({ navigation, route }: Props) {
         ) : (
           <View style={styles.emptyState}>
             <View style={styles.emptyMarkWrap}>
-              <Text style={styles.emptyMark}>?</Text>
+              <Image source={ICONS.question} style={styles.emptyMarkImage} />
             </View>
             <Text
               style={[
@@ -374,7 +377,7 @@ export function HomeScreen({ navigation, route }: Props) {
 }
 
 type IconButtonProps = {
-  icon: string;
+  icon: IconName;
   label: string;
   onPress: () => void;
   accent: string;
@@ -404,7 +407,7 @@ function IconButton({
         disabled && styles.iconButtonDisabled,
       ]}
     >
-      <Text style={styles.iconButtonIcon}>{icon}</Text>
+      <Image source={ICONS[icon]} style={styles.iconButtonImage} />
       <Text style={styles.iconButtonLabel} numberOfLines={1}>
         {label}
       </Text>
@@ -456,9 +459,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     elevation: 0,
   },
-  headerButtonIcon: {
-    fontSize: 22,
-    lineHeight: 28,
+  headerButtonImage: {
+    width: 30,
+    height: 30,
   },
   scrollContent: {
     flexGrow: 1,
@@ -484,11 +487,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  emptyMark: {
-    fontSize: 116,
-    lineHeight: 132,
-    fontWeight: "900",
-    color: COLORS.placeholder,
+  emptyMarkImage: {
+    width: 132,
+    height: 132,
   },
   tagline: {
     ...TYPOGRAPHY.body,
@@ -542,9 +543,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     elevation: 0,
   },
-  iconButtonIcon: {
-    fontSize: 22,
-    lineHeight: 28,
+  iconButtonImage: {
+    width: 32,
+    height: 32,
   },
   iconButtonLabel: {
     ...TYPOGRAPHY.caption,

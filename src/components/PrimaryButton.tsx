@@ -1,8 +1,11 @@
 import React from "react";
 import {
+  Image,
   Pressable,
   StyleSheet,
   Text,
+  View,
+  type ImageSourcePropType,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
@@ -21,6 +24,7 @@ type Props = {
   color: string;
   disabled?: boolean;
   accessibilityHint?: string;
+  iconSource?: ImageSourcePropType;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -30,6 +34,7 @@ export function PrimaryButton({
   color,
   disabled,
   accessibilityHint,
+  iconSource,
   style,
 }: Props) {
   return (
@@ -48,14 +53,27 @@ export function PrimaryButton({
         style,
       ]}
     >
-      <Text style={styles.label} allowFontScaling maxFontSizeMultiplier={1.5}>
-        {label}
-      </Text>
+      <View style={styles.content}>
+        {iconSource && <Image source={iconSource} style={styles.icon} />}
+        <Text style={styles.label} allowFontScaling maxFontSizeMultiplier={1.5}>
+          {label}
+        </Text>
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: SPACING.s,
+  },
+  icon: {
+    width: 34,
+    height: 34,
+  },
   button: {
     minHeight: 56,
     minWidth: MIN_TOUCH,

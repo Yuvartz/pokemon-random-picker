@@ -10,6 +10,7 @@ import {
 import { useSettings } from "../context/SettingsContext";
 import { ALL_POKEMON } from "../data/pokemon";
 import { getRandomPokemonId } from "../utils/random";
+import { ICONS } from "../theme/icons";
 
 /**
  * The ~1 second reveal animation: a pulsing question mark while a few
@@ -67,9 +68,10 @@ export function LoadingReveal() {
       accessibilityRole="progressbar"
     >
       <View style={styles.markWrap}>
-        <Animated.Text style={[styles.mark, { transform: [{ scale }] }]}>
-          ?
-        </Animated.Text>
+        <Animated.Image
+          source={ICONS.question}
+          style={[styles.markImage, { transform: [{ scale }] }]}
+        />
       </View>
       <Text style={styles.flashName}>{flashName}</Text>
       <Text style={styles.caption}>{strings.loadingLabel}</Text>
@@ -94,11 +96,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     ...SHADOWS.raised,
   },
-  mark: {
-    fontSize: 104,
-    lineHeight: 120,
-    fontWeight: "900",
-    color: COLORS.placeholder,
+  markImage: {
+    width: 110,
+    height: 110,
   },
   flashName: {
     ...TYPOGRAPHY.screenTitle,

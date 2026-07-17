@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Image as RNImage, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
+import { ICONS } from "../theme/icons";
 import { COLORS, RADIUS, SPACING, TYPOGRAPHY } from "../theme/colors";
 import { useSettings } from "../context/SettingsContext";
 import type { PokemonData } from "../types/pokemon";
@@ -30,7 +31,10 @@ export function PokemonArtwork({ pokemon, size }: Props) {
         accessible
         accessibilityLabel={strings.imageUnavailable}
       >
-        <Text style={styles.placeholderMark}>?</Text>
+        <RNImage
+          source={ICONS.question}
+          style={{ width: size * 0.45, height: size * 0.45 }}
+        />
         <Text style={styles.placeholderText}>{strings.imageUnavailable}</Text>
       </View>
     );
