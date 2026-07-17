@@ -1,0 +1,99 @@
+import type { Language } from "../types/pokemon";
+
+const en = {
+  appTitle: "Pokémon Random Picker",
+  tagline: "Tap the button to discover a random Pokémon!",
+  chooseButton: "Choose Random Pokémon",
+  chooseAnotherButton: "Choose Another Pokémon",
+  choosing: "Choosing...",
+  replaySpeech: "Replay",
+  stopSpeech: "Stop",
+  speechUnavailable:
+    "Text-to-speech is not available on this device. You can still read everything on screen.",
+  imageUnavailable: "Image could not be loaded",
+  pokedexNumber: "Pokédex No.",
+  typeLabel: "Type",
+  abilityLabel: "Main Ability",
+  heightLabel: "Height",
+  weightLabel: "Weight",
+  metersUnit: "m",
+  kilogramsUnit: "kg",
+  aboutTitle: "About",
+  aboutText:
+    "An unofficial, non-commercial educational project. Pokémon names and imagery belong to their respective rights holders (Nintendo, Game Freak, The Pokémon Company). Artwork is loaded from the free PokéAPI project.",
+  settingsTitle: "Settings",
+  languageLabel: "Language",
+  languageHebrew: "עברית",
+  languageEnglish: "English",
+  autoSpeechLabel: "Automatic speech",
+  speechRateLabel: "Speech speed",
+  rateSlow: "Slow",
+  rateNormal: "Normal",
+  rateFast: "Fast",
+  hapticsLabel: "Touch feedback (vibration)",
+  clearHistoryLabel: "Clear selection history",
+  clearHistoryConfirmTitle: "Clear history?",
+  clearHistoryConfirmMessage: "This removes all recently selected Pokémon.",
+  cancel: "Cancel",
+  clear: "Clear",
+  historyTitle: "History",
+  historyEmpty: "No Pokémon selected yet. Go pick one!",
+  historyButton: "History",
+  settingsButton: "Settings",
+  loadingLabel: "Who will it be?",
+  errorGeneric: "Something went wrong. Please try again.",
+  speechErrorShort: "Speech failed to play.",
+};
+
+const he: typeof en = {
+  appTitle: "מגריל הפוקימונים",
+  tagline: "לחצו על הכפתור כדי לגלות פוקימון אקראי!",
+  chooseButton: "הגרילו פוקימון",
+  chooseAnotherButton: "הגרילו פוקימון נוסף",
+  choosing: "מגריל...",
+  replaySpeech: "השמעה מחדש",
+  stopSpeech: "עצירה",
+  speechUnavailable:
+    "הקראה קולית אינה זמינה במכשיר הזה. אפשר עדיין לקרוא הכול על המסך.",
+  imageUnavailable: "לא ניתן לטעון את התמונה",
+  pokedexNumber: "מס' פוקדקס",
+  typeLabel: "סוג",
+  abilityLabel: "יכולת מרכזית",
+  heightLabel: "גובה",
+  weightLabel: "משקל",
+  metersUnit: 'מ',
+  kilogramsUnit: 'ק"ג',
+  aboutTitle: "אודות",
+  aboutText:
+    "פרויקט חינוכי לא רשמי וללא מטרות רווח. השמות והדמויות של פוקימון שייכים לבעלי הזכויות שלהם (נינטנדו, גיים פריק וחברת הפוקימון). התמונות נטענות מפרויקט PokéAPI החופשי.",
+  settingsTitle: "הגדרות",
+  languageLabel: "שפה",
+  languageHebrew: "עברית",
+  languageEnglish: "English",
+  autoSpeechLabel: "הקראה אוטומטית",
+  speechRateLabel: "מהירות הקראה",
+  rateSlow: "איטית",
+  rateNormal: "רגילה",
+  rateFast: "מהירה",
+  hapticsLabel: "משוב מגע (רטט)",
+  clearHistoryLabel: "ניקוי היסטוריית הגרלות",
+  clearHistoryConfirmTitle: "לנקות את ההיסטוריה?",
+  clearHistoryConfirmMessage: "פעולה זו תמחק את כל הפוקימונים שנבחרו לאחרונה.",
+  cancel: "ביטול",
+  clear: "ניקוי",
+  historyTitle: "היסטוריה",
+  historyEmpty: "עוד לא נבחר אף פוקימון. קדימה, הגרילו אחד!",
+  historyButton: "היסטוריה",
+  settingsButton: "הגדרות",
+  loadingLabel: "מי זה יהיה?",
+  errorGeneric: "משהו השתבש. נסו שוב.",
+  speechErrorShort: "ההקראה נכשלה.",
+};
+
+export type Strings = typeof en;
+
+export const STRINGS: Record<Language, Strings> = { en, he };
+
+export function getStrings(language: Language): Strings {
+  return STRINGS[language];
+}

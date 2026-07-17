@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "13_Pokemon",
-    "slug": "13_Pokemon",
+    "name": "Pokémon Random Picker",
+    "slug": "pokemon-random-picker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,7 +19,14 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "output": "single"
+    },
+    "experiments": {
+      "baseUrl": "/pokemon-random-picker"
+    },
+    "plugins": [
+      "expo-image"
+    ]
   }
 }
