@@ -21,7 +21,6 @@ import {
   TYPOGRAPHY,
 } from "../theme/colors";
 import { translateType } from "../localization/typeNames";
-import { getPokemonById } from "../data/pokemon";
 import { getEvolutionStages } from "../utils/evolutions";
 import type { PokemonData } from "../types/pokemon";
 
@@ -47,10 +46,19 @@ const SILVER_FRAME = ["#F4F6FA", "#CBD3DF", "#E8ECF2"] as const;
  */
 export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
   const { settings, strings, isRTL } = useSettings();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const isHebrew = settings.language === "he";
   const theme = getTypeTheme(pokemon.types[0]);
-  const artworkSize = Math.min(width * 0.55, 250);
+  // Scale the artwork with the viewport height so the whole card fits
+  // in one fold on phones — no scrolling needed.
+  const artworkSize = Math.min(
+    width * 0.5,
+    240,
+    Math.max(118, height * 0.215)
+  );
+  // On short screens, drop the least-important row (height/weight) and
+  // tighten text so the whole card always fits in one fold.
+  const isShort = height < 700;
   const evolutionStages = getEvolutionStages(pokemon);
   const evolutionMemberCount = evolutionStages.reduce(
     (count, stage) => count + stage.length,
@@ -58,9 +66,7 @@ export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
   );
   const showEvolutionStrip = evolutionMemberCount > 1;
   const evolutionStripHeight =
-    evolutionMemberCount * MIN_TOUCH +
-    (evolutionStages.length - 1) * 14 +
-    SPACING.s;
+    evolutionMemberCount * 42 + (evolutionStages.length - 1) * 12 + SPACING.s;
 
   const primaryName = isHebrew ? pokemon.hebrewName : pokemon.englishName;
   const secondaryName = isHebrew ? pokemon.englishName : pokemon.hebrewName;
@@ -76,13 +82,6 @@ export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
     pokemon.evolutionStage === 0
       ? strings.stageBasic
       : `${strings.stagePrefix} ${pokemon.evolutionStage}`;
-  const evolvesFrom =
-    pokemon.evolvesFromId != null ? getPokemonById(pokemon.evolvesFromId) : null;
-  const evolvesFromName = evolvesFrom
-    ? isHebrew
-      ? evolvesFrom.hebrewName
-      : evolvesFrom.englishName
-    : null;
 
   return (
     <LinearGradient
@@ -121,11 +120,6 @@ export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
           {primaryName}
         </Text>
         <Text style={styles.secondaryName}>{secondaryName}</Text>
-        {evolvesFromName && (
-          <Text style={[styles.evolvesFrom, { color: theme.accent }]}>
-            🥚 {strings.evolvesFromLabel} {evolvesFromName}
-          </Text>
-        )}
 
         {/* Artwork in a silver frame, like the card's picture window */}
         <LinearGradient
@@ -140,8 +134,10 @@ export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
             end={{ x: 0.5, y: 1 }}
             style={[
               styles.artworkWindow,
-              showEvolutionStrip && {
-                minHeight: Math.max(210, evolutionStripHeight),
+              {
+                minHeight: showEvolutionStrip
+                  ? Math.max(artworkSize + SPACING.m, evolutionStripHeight)
+                  : artworkSize + SPACING.m,
               },
             ]}
           >
@@ -183,7 +179,7 @@ export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
                             accessibilityRole="button"
                             accessibilityLabel={accessibilityLabel}
                             accessibilityState={{ selected: isCurrent }}
-                            hitSlop={2}
+                            hitSlop={6}
                             style={({ pressed }) => [
                               styles.evolutionMember,
                               {
@@ -261,7 +257,13 @@ export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
             </View>
             <Text style={styles.abilityLabel}>{strings.abilityLabel}</Text>
           </View>
-          <Text style={[styles.abilityText, { textAlign, writingDirection }]}>
+          <Text
+            style={[
+              styles.abilityText,
+              isShort && styles.tightText,
+              { textAlign, writingDirection },
+            ]}
+          >
             {abilityDescription}
           </Text>
         </View>
@@ -270,21 +272,30 @@ export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
         <View
           style={[styles.flavorBox, { borderColor: theme.accent }]}
         >
-          <Text style={[styles.flavorText, { textAlign, writingDirection }]}>
+          <Text
+            style={[
+              styles.flavorText,
+              isShort && styles.tightText,
+              { textAlign, writingDirection },
+            ]}
+          >
             {description}
           </Text>
         </View>
 
-        {/* Bottom info strip */}
-        <View style={[styles.footerRow, isRTL && styles.rowRTL]}>
-          <Text style={styles.footerText}>
-            📏 {strings.heightLabel}: {pokemon.heightM} {strings.metersUnit}
-          </Text>
-          <View style={styles.footerDivider} />
-          <Text style={styles.footerText}>
-            ⚖️ {strings.weightLabel}: {pokemon.weightKg} {strings.kilogramsUnit}
-          </Text>
-        </View>
+        {/* Bottom info strip (hidden on short screens to keep one fold) */}
+        {!isShort && (
+          <View style={[styles.footerRow, isRTL && styles.rowRTL]}>
+            <Text style={styles.footerText}>
+              📏 {strings.heightLabel}: {pokemon.heightM} {strings.metersUnit}
+            </Text>
+            <View style={styles.footerDivider} />
+            <Text style={styles.footerText}>
+              ⚖️ {strings.weightLabel}: {pokemon.weightKg}{" "}
+              {strings.kilogramsUnit}
+            </Text>
+          </View>
+        )}
       </LinearGradient>
     </LinearGradient>
   );
@@ -293,7 +304,7 @@ export function PokemonCard({ pokemon, onSelectEvolution }: Props) {
 const styles = StyleSheet.create({
   goldFrame: {
     borderRadius: RADIUS.cardOuter,
-    padding: 12,
+    padding: 8,
     width: "100%",
     ...SHADOWS.card,
   },
@@ -301,7 +312,7 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.card - 4,
     borderWidth: 1,
     borderColor: COLORS.whiteOverlay,
-    padding: SPACING.m,
+    padding: SPACING.sm,
   },
   headerRow: {
     flexDirection: "row",
@@ -313,53 +324,49 @@ const styles = StyleSheet.create({
     flexDirection: "row-reverse",
   },
   stageChip: {
-    minHeight: 30,
+    minHeight: 24,
     borderRadius: RADIUS.pill,
     borderWidth: 1.5,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: SPACING.xs,
+    paddingHorizontal: SPACING.s,
+    paddingVertical: 2,
     alignItems: "center",
     justifyContent: "center",
   },
   stageChipText: {
-    ...TYPOGRAPHY.caption,
+    fontSize: 11,
+    lineHeight: 14,
     fontWeight: "800",
   },
   hp: {
-    fontSize: 19,
-    lineHeight: 24,
+    fontSize: 16,
+    lineHeight: 20,
     fontWeight: "900",
     color: "#C0392B",
   },
   primaryName: {
-    ...TYPOGRAPHY.cardTitle,
+    fontSize: 24,
+    lineHeight: 28,
+    fontWeight: "900",
     color: COLORS.text,
     textAlign: "center",
-    marginTop: SPACING.xs,
   },
   secondaryName: {
-    ...TYPOGRAPHY.body,
+    fontSize: 13,
+    lineHeight: 16,
     color: COLORS.textSecondary,
     textAlign: "center",
   },
-  evolvesFrom: {
-    ...TYPOGRAPHY.caption,
-    fontWeight: "700",
-    textAlign: "center",
-    marginTop: SPACING.xs,
-  },
   artworkFrame: {
     borderRadius: RADIUS.button,
-    padding: 5,
-    marginTop: SPACING.sm,
+    padding: 4,
+    marginTop: SPACING.s,
     ...SHADOWS.subtle,
   },
   artworkWindow: {
-    minHeight: 210,
     borderRadius: RADIUS.button - 4,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: SPACING.s,
+    paddingVertical: SPACING.xs,
     overflow: "hidden",
   },
   evolutionStripAnchor: {
@@ -387,8 +394,8 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   evolutionMember: {
-    width: MIN_TOUCH,
-    height: MIN_TOUCH,
+    width: 42,
+    height: 42,
     borderRadius: RADIUS.s,
     borderWidth: 1,
     alignItems: "center",
@@ -403,8 +410,8 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.94 }],
   },
   evolutionThumbnail: {
-    width: 40,
-    height: 40,
+    width: 34,
+    height: 34,
   },
   evolutionArrow: {
     color: COLORS.textSecondary,
@@ -435,14 +442,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     flexWrap: "wrap",
-    marginTop: SPACING.sm,
-    marginBottom: SPACING.sm,
+    marginTop: SPACING.xs,
+    marginBottom: SPACING.xs,
   },
   abilityBlock: {
     borderRadius: RADIUS.s,
     borderWidth: 1.5,
-    padding: SPACING.m,
-    marginBottom: SPACING.sm,
+    padding: SPACING.s,
+    marginBottom: SPACING.xs,
     ...SHADOWS.subtle,
   },
   abilityHeader: {
@@ -472,15 +479,14 @@ const styles = StyleSheet.create({
     letterSpacing: 0.7,
   },
   abilityName: {
-    fontSize: 17,
-    lineHeight: 22,
+    fontSize: 15,
+    lineHeight: 19,
     fontWeight: "800",
     flexShrink: 1,
   },
   abilityText: {
-    ...TYPOGRAPHY.body,
-    fontSize: 14,
-    lineHeight: 21,
+    fontSize: 13,
+    lineHeight: 18,
     color: COLORS.text,
   },
   flavorBox: {
@@ -488,13 +494,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: "dashed",
     backgroundColor: COLORS.whiteOverlay,
-    padding: SPACING.sm,
-    marginBottom: SPACING.sm,
+    padding: SPACING.s,
+    marginBottom: SPACING.xs,
   },
   flavorText: {
-    ...TYPOGRAPHY.body,
-    fontSize: 14,
-    lineHeight: 21,
+    fontSize: 13,
+    lineHeight: 18,
     fontStyle: "italic",
     color: COLORS.textSecondary,
   },
@@ -503,7 +508,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: SPACING.m,
-    minHeight: MIN_TOUCH - 16,
+    minHeight: 22,
   },
   footerDivider: {
     width: 1,
@@ -515,5 +520,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     color: COLORS.text,
+  },
+  tightText: {
+    fontSize: 12,
+    lineHeight: 16,
   },
 });

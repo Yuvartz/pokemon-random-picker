@@ -194,11 +194,11 @@ export function PickButton({ label, onPress, accent, revealing }: Props) {
 
 const styles = StyleSheet.create({
   button: {
-    minHeight: 64,
+    minHeight: 54,
     borderRadius: RADIUS.pill,
     borderWidth: 2,
     paddingHorizontal: SPACING.l,
-    paddingVertical: SPACING.sm,
+    paddingVertical: SPACING.s,
     justifyContent: "center",
     overflow: "hidden",
     ...SHADOWS.raised,
@@ -219,13 +219,13 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   ball: {
-    width: 42,
-    height: 42,
+    width: 34,
+    height: 34,
   },
   label: {
     color: COLORS.buttonText,
-    fontSize: 20,
-    lineHeight: 26,
+    fontSize: 17,
+    lineHeight: 22,
     fontWeight: "900",
     textAlign: "center",
     textShadowColor: "rgba(0, 0, 0, 0.25)",
