@@ -3,14 +3,15 @@ import {
   AccessibilityInfo,
   Animated,
   Easing,
-  ImageBackground,
   Platform,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { ICONS } from "../theme/icons";
+import { shadeColor } from "../utils/colorShade";
 import { COLORS, RADIUS, SHADOWS, SPACING } from "../theme/colors";
 
 type Props = {
@@ -59,10 +60,10 @@ function ensureWebKeyframes(): void {
 ensureWebKeyframes();
 
 /**
- * The app's hero button. Its generated pixel-art game plate frames an
- * animated capsule ball: it wobbles side to side while idle (like a ball
- * about to pop open) and spins during the reveal. Respects the
- * reduced-motion accessibility setting.
+ * The app's hero button. A glossy gradient capsule in the current type
+ * color with an animated capsule ball: it wobbles side to side while
+ * idle (like a ball about to pop open) and spins during the reveal.
+ * Respects the reduced-motion accessibility setting.
  */
 export function PickButton({ label, onPress, accent, revealing }: Props) {
   const wobble = useRef(new Animated.Value(0)).current;
@@ -136,12 +137,7 @@ export function PickButton({ label, onPress, accent, revealing }: Props) {
     }).start();
 
   return (
-    <Animated.View
-      style={[
-        styles.outer,
-        !IS_WEB && { transform: [{ scale: pressScale }] },
-      ]}
-    >
+    <Animated.View style={IS_WEB ? undefined : { transform: [{ scale: pressScale }] }}>
       <Pressable
         onPress={onPress}
         disabled={revealing}
@@ -156,12 +152,18 @@ export function PickButton({ label, onPress, accent, revealing }: Props) {
             : undefined
         }
       >
-        <ImageBackground
-          source={ICONS.buttonplate}
-          resizeMode="stretch"
-          imageStyle={styles.plateImage}
-          style={styles.button}
+        <LinearGradient
+          colors={[
+            shadeColor(accent, 0.25),
+            accent,
+            shadeColor(accent, -0.22),
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0.9, y: 1 }}
+          style={[styles.button, { borderColor: shadeColor(accent, -0.35) }]}
         >
+          {/* Glossy top shine */}
+          <View style={styles.shine} pointerEvents="none" />
           <View style={styles.content}>
             <View
               {...(IS_WEB
@@ -176,38 +178,39 @@ export function PickButton({ label, onPress, accent, revealing }: Props) {
                 ]}
               />
             </View>
-            <View
-              style={[styles.labelBackdrop, { borderColor: accent }]}
+            <Text
+              style={styles.label}
+              allowFontScaling
+              maxFontSizeMultiplier={1.4}
             >
-              <Text
-                style={styles.label}
-                allowFontScaling
-                maxFontSizeMultiplier={1.4}
-              >
-                {label}
-              </Text>
-            </View>
+              {label}
+            </Text>
           </View>
-        </ImageBackground>
+        </LinearGradient>
       </Pressable>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  outer: {
-    width: "100%",
-  },
   button: {
-    minHeight: 86,
-    width: "100%",
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.s,
+    minHeight: 64,
+    borderRadius: RADIUS.pill,
+    borderWidth: 2,
+    paddingHorizontal: SPACING.l,
+    paddingVertical: SPACING.sm,
     justifyContent: "center",
+    overflow: "hidden",
     ...SHADOWS.raised,
   },
-  plateImage: {
-    borderRadius: RADIUS.button,
+  shine: {
+    position: "absolute",
+    top: 5,
+    left: 18,
+    right: 18,
+    height: 14,
+    borderRadius: RADIUS.pill,
+    backgroundColor: "rgba(255, 255, 255, 0.35)",
   },
   content: {
     flexDirection: "row",
@@ -216,19 +219,8 @@ const styles = StyleSheet.create({
     gap: SPACING.sm,
   },
   ball: {
-    width: 50,
-    height: 50,
-  },
-  labelBackdrop: {
-    minHeight: 42,
-    maxWidth: "78%",
-    justifyContent: "center",
-    borderRadius: RADIUS.pill,
-    borderWidth: 2,
-    backgroundColor: "rgba(16, 24, 40, 0.88)",
-    paddingHorizontal: SPACING.m,
-    paddingVertical: SPACING.xs,
-    ...SHADOWS.subtle,
+    width: 42,
+    height: 42,
   },
   label: {
     color: COLORS.buttonText,
@@ -236,7 +228,7 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     fontWeight: "900",
     textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.65)",
+    textShadowColor: "rgba(0, 0, 0, 0.25)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
     flexShrink: 1,
